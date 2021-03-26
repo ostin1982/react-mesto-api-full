@@ -1,0 +1,17 @@
+.footer {
+    min-width: 282px;
+    max-width: 882px;
+    margin: 0 auto;
+    padding-top: 0;
+    padding-left: 0;
+    padding-bottom: 60px;
+    padding-right: 0;
+}
+
+@media screen and (max-width: 881px) {
+    .footer { 
+        padding-right: calc((100vw - 320px)/(881 - 320) * (0 - 20) + 20px);
+        padding-bottom: calc((100vw - 320px)/(881 - 320) * (60 - 36) + 36px);
+        padding-left: calc((100vw - 320px)/(881 - 320) * (0 - 20) + 20px);
+    }
+}

@@ -1,0 +1,5 @@
+.popup__photo-close {
+    top: -48px;
+    right: -48px;
+    background-color: rgba(0, 0, 0, 0);
+}

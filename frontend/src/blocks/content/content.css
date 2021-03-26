@@ -1,0 +1,21 @@
+.content {
+    position: relative;
+    min-width: 320px;
+    max-width: 882px;
+    height: 100%;
+    margin: 0 auto;
+}
+
+.content::before {
+    content: '';
+    display: block;
+    height: 1px;
+    background: #545454;
+    opacity: 0.7;
+}
+
+@media screen and (max-width: 360px) {
+    .content { 
+        width: 100vw;
+    }
+}

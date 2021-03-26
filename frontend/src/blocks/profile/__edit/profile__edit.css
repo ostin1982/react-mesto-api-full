@@ -1,0 +1,8 @@
+.profile__edit {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: flex-start;
+    box-sizing: border-box;
+    max-width: 100%;
+}
