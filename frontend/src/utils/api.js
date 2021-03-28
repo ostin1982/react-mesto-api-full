@@ -106,13 +106,12 @@ class Api {
     }
 }
 
+const token = localStorage.getItem('token')
 
-//export  const api = new Api({
-//    baseUrl: 'https://mesto.nomoreparties.co/v1/cohort-18',
-//    headers: {
-//        authorization: 'bd4342ac-191a-4dec-8812-99c9c948ab01',
-//       'Content-Type': "application/json",
-//    },
-//});
-
-export default Api;
+export  const api = new Api({
+    baseUrl: 'https://api.ostin.nomoredomains.icu',
+    headers: {
+        authorization: `Bearer ${token}`,
+        'Content-Type': "application/json",
+    },
+});
