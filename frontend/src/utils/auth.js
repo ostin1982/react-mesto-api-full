@@ -1,4 +1,4 @@
-import { BASE_URL }from './utils';
+import { BASE_URL } from './utils';
 
 const chekResponse = (res) => res.ok ? res.json() : Promise.reject(`Error ${res.statusText}`);
 
