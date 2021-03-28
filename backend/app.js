@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -6,7 +7,7 @@ const expressWinston = require('express-winston');
 const winston = require('winston');
 const { celebrate, CelebrateError, Joi } = require('celebrate');
 
-const router = require('./routes');
+const router = require('./routes/router');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
 const auth = require('./middlewares/auth');
@@ -54,11 +55,9 @@ const errorHandler = (err, req, res, next) => {
   if (err.status) {
     return res.status(err.status).send({ message: err.message });
   }
-
   if (err instanceof CelebrateError) {
     return res.status(400).send({ message: `Переданы неверные/ неполные данные: ${err}` });
   }
-
   res.status(500).send({ message: err.message });
   return next();
 };
@@ -105,7 +104,6 @@ createUser);
 
 app.use(auth);
 app.use('/', router);
-
 app.use(errorLogger);
 
 app.use(() => {

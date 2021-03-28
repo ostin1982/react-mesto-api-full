@@ -106,12 +106,9 @@ class Api {
     }
 }
 
-const token = localStorage.getItem('token')
-
-export  const api = new Api({
+export const api = new Api({
     baseUrl: 'https://api.ostin.nomoredomains.icu',
     headers: {
-        authorization: `Bearer ${token}`,
         'Content-Type': "application/json",
     },
 });
