@@ -23,17 +23,20 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
-const allowedCors = [
-  'https://ostin.nomoredomains.icu',
-  'https://www.ostin.nomoredomains.icu',
-  'http://ostin.nomoredomains.icu',
-  'http://www.ostin.nomoredomains.icu',
-  'http://localhost:3001',
-  'http://localhost:3000',
-];
+const options = {
+  origin: [
+    'https://ostin.nomoredomains.icu',
+    'https://www.ostin.nomoredomains.icu',
+    'http://ostin.nomoredomains.icu',
+    'http://www.ostin.nomoredomains.icu',
+    'http://localhost:3001',
+    'http://localhost:3000',
+  ],
+  credentials: true,
+};
 
 const corsOptions = {
-  origin: allowedCors,
+  origin: options,
   optionsSuccessStatus: 200,
 };
 
@@ -62,11 +65,11 @@ const errorHandler = (err, req, res, next) => {
   return next();
 };
 
-app.use(cors(corsOptions));
+app.use('*', cors(corsOptions));
 
 app.use((req, res, next) => {
   const { origin } = req.headers;
-  if (allowedCors.includes(origin)) {
+  if (options.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin);
   }
 

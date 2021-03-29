@@ -9,6 +9,7 @@ export const register = ({ email, password }) => {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
     })
     .then(chekResponse);
@@ -21,6 +22,7 @@ export const login = ({ email, password }) => {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
         },
+        credentials: 'include',
         body: JSON.stringify({ email, password }),
         })
         .then(chekResponse)
