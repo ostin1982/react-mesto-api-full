@@ -56,7 +56,7 @@ const errorHandler = (err, req, res, next) => {
     return res.status(err.status).send({ message: err.message });
   }
   if (err instanceof CelebrateError) {
-    return res.status(400).send({ message: `Переданы неверные/ неполные данные: ${err}` });
+    return res.status(400).send({ message: `Переданы неверные данные: ${err}` });
   }
   res.status(500).send({ message: err.message });
   return next();
