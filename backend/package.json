@@ -1,5 +1,5 @@
 {
-  "name": "express-mesto",
+  "name": "react-mesto-api-full",
   "version": "1.0.0",
   "description": "`/public` — статика, полученная в результате билда фронтенд-приложения на Реакте  \r `/data` — JSON-файлы для временной эмуляции работы с базой данных  \r `/routes` — папка с файлами роутера",
   "main": "app.js",
@@ -9,13 +9,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ostin1982/express-mesto.git"
+    "url": "git+https://github.com/ostin1982/react-mesto-api-full.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ostin1982/express-mesto/issues"
+    "url": "https://github.com/ostin1982/react-mesto-api-full/issues"
   },
   "homepage": "./",
   "dependencies": {
