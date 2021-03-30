@@ -115,4 +115,4 @@ app.use(() => {
 
 app.use(errorHandler);
 
-app.listen(PORT);
+app.listen(PORT, () => console.log(`Aplication is working on the port ${PORT}`));
