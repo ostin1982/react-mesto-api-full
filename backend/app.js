@@ -25,10 +25,10 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 const options = {
   origin: [
-    'https://ostin.nomoredomains.icu',
-    'https://www.ostin.nomoredomains.icu',
-    'http://ostin.nomoredomains.icu',
-    'http://www.ostin.nomoredomains.icu',
+    'https://ostin.student.nomoredomains.club',
+    'https://www.ostin.student.nomoredomains.club',
+    'http://ostin.student.nomoredomains.club',
+    'http://www.ostin.student.nomoredomains.club',
     'http://localhost:3001',
     'http://localhost:3000',
   ],
