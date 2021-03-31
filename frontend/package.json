@@ -17,7 +17,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "npm run build && scp -r ./build/* ostin@178.154.203.139:/home/ostin/react-mesto-api-full/news-frontend"
+    "deploy": "npm run build && scp -r ./build/* ostin@178.154.203.139:/home/ostin/react-mesto-api-full/backend/news-frontend"
   },
   "eslintConfig": {
     "extends": [
