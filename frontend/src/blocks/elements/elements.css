@@ -1,0 +1,24 @@
+.elements {
+    position: relative;
+    min-width: 282px;
+    max-width: 882px;
+    height: 100%;
+    margin: 0 auto;
+    padding-top: 50px;
+    padding-left: 0;
+    padding-right: 0;
+    padding-bottom: 66px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(282px, 1fr));
+    column-gap: 18px;
+    row-gap: 20px;
+}
+
+@media screen and (max-width: 1279px) {
+    .elements { 
+        padding-left: calc((100vw - 320px)/(1279 - 320) * (0 - 20) + 20px);
+        padding-right: calc((100vw - 320px)/(1279 - 320) * (0 - 20) + 20px);
+        padding-bottom: calc((100vw - 320px)/(1279 - 320) * (66 - 48) + 48px);
+        margin: 0;
+    }
+}

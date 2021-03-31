@@ -1,0 +1,11 @@
+.popup__photo-big-card {
+    transition: opacity 1s ease-out;
+    margin: 0 auto;
+    right: 0;
+    bottom: 0;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}

@@ -1,0 +1,30 @@
+.profile {
+    min-width: 282px;
+    max-width: 882px;
+    height: 100%;
+    padding-top: 40px;
+    padding-left: 0;
+    padding-right: 0;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 120px 1fr 150px;
+    column-gap: 30px;
+}
+
+@media screen and (max-width: 1279px) {
+    .profile { 
+        padding-left: calc((100vw - 320px)/(1279 - 320) * (0 - 20) + 20px);
+        padding-right: calc((100vw - 320px)/(1279 - 320) * (0 - 20) + 20px);
+        margin: 0;
+    }
+}
+
+@media screen and (max-width: 620px) {
+    .profile { 
+        grid-template-columns: 282px;
+        grid-template-rows: 120px 1fr 1fr;
+        row-gap: 14px;
+        justify-items: center;
+        justify-content: center;
+    }
+}

@@ -1,0 +1,18 @@
+.popup__check {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 430px;
+    height: 330px;    
+    align-items: center;
+    background: #ffffff;
+    box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+}
+
+@media screen and (max-width: 530px) {
+    .popup__check {
+        width: 240px;
+    }
+}
