@@ -9,6 +9,7 @@ const { celebrate, errors, Joi } = require('celebrate');
 
 const router = require('./routes/router');
 const { login, createUser } = require('./controllers/users');
+const auth = require('./middlewares/auth');
 
 const app = express();
 
@@ -70,6 +71,7 @@ app.post('/signup', celebrate({
 }),
 createUser);
 
+app.use(auth);
 app.use('/', router);
 app.use(errorLogger);
 app.use(errors());
