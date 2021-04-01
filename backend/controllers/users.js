@@ -4,6 +4,8 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const RegistrationError = require('../errors/RegistrationError');
 const NotFoundError = require('../errors/NotFoundError');
+const AuthenticationError = require('../errors/AuthenticationError');
+const ValidationError = require('../errors/ValidationError');
 
 const { JWT_SECRET = 'my-little-secret' } = process.env;
 
@@ -11,13 +13,19 @@ const getUsers = (req, res, next) => User.find({})
   .orFail(() => {
     throw new NotFoundError('Нет такого пользователя');
   })
-  .then((users) => res.status(200).send(users))
+  .then((users) => res.send(users))
   .catch(next);
 
 const getProfile = (req, res, next) => {
+  const {
+    email, password,
+  } = req.body;
   User.findById(req.params._id)
-    .orFail(() => {
-      throw new NotFoundError('Нет такого пользователя');
+    .orFail((err) => {
+      if (err.name === 'ValidationError') {
+        throw new ValidationError('Ошибка в заполнении полей');
+      }
+      throw new RegistrationError(`${email} или ${password} уже используется`);
     })
     .then((user) => res.status(200).send(user))
     .catch(next);
@@ -25,16 +33,18 @@ const getProfile = (req, res, next) => {
 
 const createProfile = (req, res, next) => User.findById(req.user._id)
   .orFail(() => {
-    throw new NotFoundError('Нет такого пользователя');
+    throw new ValidationError('Ошибка в заполнении полей');
   })
   .then((user) => res.status(200).send(user))
   .catch(next);
 
 const updateProfile = (req, res, next) => {
   const { name, about } = req.body;
-  return User.findByIdAndUpdate(req.user._id, { name, about }, { new: true })
-    .orFail(() => {
-      throw new NotFoundError('Нет такого пользователя');
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+    .orFail((err) => {
+      if (err.name === 'ValidationError') {
+        throw new ValidationError('Ошибка в заполнении полей');
+      }
     })
     .then((user) => res.status(200).send(user))
     .catch(next);
@@ -42,9 +52,9 @@ const updateProfile = (req, res, next) => {
 
 const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
-  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true })
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
     .orFail(() => {
-      throw new NotFoundError('Нет такого пользователя');
+      throw new ValidationError('Ошибка в заполнении поля');
     })
     .then((user) => res.status(200).send(user))
     .catch(next);
@@ -59,6 +69,9 @@ const login = (req, res, next) => {
         expiresIn: '7d',
       });
       res.send({ token });
+    })
+    .catch(() => {
+      throw new AuthenticationError('Необходима авторизация');
     })
     .catch(next);
 };
