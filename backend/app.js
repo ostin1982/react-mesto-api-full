@@ -1,8 +1,8 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
-const helmet = require('helmet');
 const expressWinston = require('express-winston');
 const winston = require('winston');
 const { celebrate, CelebrateError, Joi } = require('celebrate');
@@ -20,7 +20,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useFindAndModify: false,
   useCreateIndex: true,
-  useUnifiedTopology: true,
 });
 
 const options = [
