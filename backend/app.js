@@ -23,14 +23,17 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
-const options = [
-  'http://ostin.student.nomoredomains.club',
-  'http://www.ostin.student.nomoredomains.club',
-  'https://www.ostin.student.nomoredomains.club',
-  'https://ostin.student.nomoredomains.club',
-  'http://localhost:3000',
-  'http://localhost:3001',
-];
+const options = {
+  origin: [
+    'http://ostin.student.nomoredomains.club',
+    'http://www.ostin.student.nomoredomains.club',
+    'https://www.ostin.student.nomoredomains.club',
+    'https://ostin.student.nomoredomains.club',
+    'http://localhost:3000',
+    'http://localhost:3001',
+  ],
+  credentials: true,
+};
 
 const requestLogger = expressWinston.logger({
   transports: [
@@ -57,6 +60,7 @@ const errorHandler = (err, req, res, next) => {
   return next();
 };
 
+app.use('*', cors(options));
 app.use(requestLogger);
 app.use(helmet());
 app.use(cors());
