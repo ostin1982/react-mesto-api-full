@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -29,6 +30,7 @@ const options = {
     'https://www.ostin.student.nomoredomains.club',
     'https://ostin.student.nomoredomains.club',
     'http://localhost:3000',
+    'http://localhost:3001',
   ],
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   preflightContinue: false,
