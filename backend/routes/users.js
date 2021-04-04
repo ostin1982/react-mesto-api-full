@@ -19,6 +19,7 @@ router.patch('/users/me', auth, celebrate({
 
 router.patch('/users/me/avatar', celebrate({
   body: Joi.object().keys({
+    // eslint-disable-next-line
     avatar: Joi.string().pattern(/^https?:\/\/(www\.)?[\w\-\/\.a-z#?]{1,}/i).required(),
   }),
 }), updateAvatar);

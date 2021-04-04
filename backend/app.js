@@ -32,6 +32,10 @@ const options = {
     'http://localhost:3000',
     'http://localhost:3001',
   ],
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  allowedHeaders: ['Content-Type', 'origin', 'Authorization', 'Accept'],
   credentials: true,
 };
 
