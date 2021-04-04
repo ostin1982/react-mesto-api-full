@@ -24,7 +24,14 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 const options = {
-  origin: '*',
+  origin: [
+    'http://ostin.student.nomoredomains.club',
+    'http://www.ostin.student.nomoredomains.club',
+    'https://www.ostin.student.nomoredomains.club',
+    'https://ostin.student.nomoredomains.club',
+    'http://localhost:3000',
+    'http://localhost:3001',
+  ],
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   preflightContinue: false,
   optionsSuccessStatus: 204,
