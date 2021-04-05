@@ -1,7 +1,6 @@
 /* eslint-disable no-console */
 require('dotenv').config();
 
-const { NODE_ENV, DB_CONNECTION_STRING } = process.env;
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -19,12 +18,22 @@ const app = express();
 
 const { PORT = 3000 } = process.env;
 
-mongoose.connect(NODE_ENV === 'production' ? DB_CONNECTION_STRING : 'mongodb://localhost:27017/mestodb', {
+mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useFindAndModify: false,
   useCreateIndex: true,
   useUnifiedTopology: true,
 });
+
+const options = {
+  origin: [
+    'http://localhost:3001',
+    'https://ostin.student.nomoredomains.club',
+  ],
+  credentials: true,
+};
+
+app.use('*', cors(options));
 
 const requestLogger = expressWinston.logger({
   transports: [
@@ -50,10 +59,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors());
 app.use(bodyParser.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
 app.use(requestLogger);
 
 app.get('/crash-test', () => {
