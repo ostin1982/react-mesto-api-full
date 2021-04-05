@@ -4,7 +4,6 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const RegistrationError = require('../errors/RegistrationError');
 const NotFoundError = require('../errors/NotFoundError');
-const AuthenticationError = require('../errors/AuthenticationError');
 const ValidationError = require('../errors/ValidationError');
 
 const { JWT_SECRET = 'my-little-secret' } = process.env;
@@ -71,7 +70,7 @@ const login = (req, res, next) => {
       res.send({ token });
     })
     .catch(() => {
-      throw new AuthenticationError('Необходима авторизация');
+      throw new NotFoundError('Нет такого пользователя');
     })
     .catch(next);
 };
