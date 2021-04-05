@@ -1,12 +1,10 @@
+/* eslint-disable linebreak-style */
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const helmet = require('helmet');
 const expressWinston = require('express-winston');
 const winston = require('winston');
-const { celebrate, CelebrateError, Joi } = require('celebrate');
+const { celebrate, errors, Joi } = require('celebrate');
 
 const router = require('./routes/router');
 const { login, createUser } = require('./controllers/users');
@@ -21,23 +19,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useFindAndModify: false,
   useCreateIndex: true,
+  useUnifiedTopology: true,
 });
-
-const options = {
-  origin: [
-    'http://ostin.student.nomoredomains.club',
-    'http://www.ostin.student.nomoredomains.club',
-    'https://www.ostin.student.nomoredomains.club',
-    'https://ostin.student.nomoredomains.club',
-    'http://localhost:3000',
-    'http://localhost:3001',
-  ],
-  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-  allowedHeaders: ['Content-Type', 'origin', 'Authorization', 'Accept'],
-  credentials: true,
-};
 
 const requestLogger = expressWinston.logger({
   transports: [
@@ -53,33 +36,17 @@ const errorLogger = expressWinston.errorLogger({
   format: winston.format.json(),
 });
 
-const errorHandler = (err, req, res, next) => {
-  if (err.status) {
-    return res.status(err.status).send({ message: err.message });
-  }
-  if (err instanceof CelebrateError) {
-    return res.status(400).send({ message: `Переданы неверные данные: ${err}` });
-  }
-  res.status(500).send({ message: err.message });
-  return next();
-};
-
-app.use('*', cors(options));
-app.use(requestLogger);
-app.use(helmet());
-app.use(cors());
-app.use(bodyParser.json());
-
 app.use((req, res, next) => {
-  const { origin } = req.headers;
-  if (options.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+  if (req.method === 'OPTIONS') {
+    res.send(200);
   }
-
   next();
 });
 
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(requestLogger);
 
 app.get('/crash-test', () => {
@@ -107,11 +74,22 @@ createUser);
 app.use(auth);
 app.use('/', router);
 app.use(errorLogger);
+app.use(errors());
 
-app.use(() => {
+app.use('/*', () => {
   throw new NotFoundError('Запрашиваемый ресурс не найден');
 });
 
-app.use(errorHandler);
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  const { statusCode = 500, message } = err;
+  res
+    .status(statusCode)
+    .send({
+      message: statusCode === 500
+        ? `На сервере произошла ошибка${err}`
+        : message,
+    });
+});
 
 app.listen(PORT);
