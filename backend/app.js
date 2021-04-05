@@ -17,7 +17,7 @@ const auth = require('./middlewares/auth');
 
 const app = express();
 
-const { PORT = 3001 } = process.env;
+const { PORT = 3000 } = process.env;
 
 mongoose.connect(NODE_ENV === 'production' ? DB_CONNECTION_STRING : 'mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
@@ -40,19 +40,16 @@ const errorLogger = expressWinston.errorLogger({
   format: winston.format.json(),
 });
 
-const options = {
-  origin: [
-    'http://localhost:3000',
-    'https://ostin.student.nomoredomains.club',
-  ],
-  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-  allowedHeaders: ['Content-Type', 'origin'],
-  credentials: true,
-};
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Headers', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
+  if (req.method === 'OPTIONS') {
+    res.send(200);
+  }
+  next();
+});
 
-app.use('*', cors(options));
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
