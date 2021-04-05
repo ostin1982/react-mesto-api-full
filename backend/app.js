@@ -5,7 +5,7 @@ const { NODE_ENV, DB_CONNECTION_STRING } = process.env;
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const expressWinston = require('express-winston');
 const winston = require('winston');
 const { celebrate, errors, Joi } = require('celebrate');
@@ -54,7 +54,7 @@ const options = {
 
 app.use('*', cors(options));
 app.use(cors());
-app.use(cookieParser.json());
+app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(requestLogger);
