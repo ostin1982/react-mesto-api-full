@@ -56,16 +56,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(requestLogger);
 
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Headers', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
-  if (req.method === 'OPTIONS') {
-    res.send(200);
-  }
-  next();
-});
-
 app.get('/crash-test', () => {
   setTimeout(() => {
     throw new Error('Сервер сейчас упадёт');
