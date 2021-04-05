@@ -1,25 +1,24 @@
 /* eslint-disable no-console */
 require('dotenv').config();
 
-const { NODE_ENV, DB_CONNECTION_STRING } = process.env;
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const helmet = require('helmet');
 const expressWinston = require('express-winston');
 const winston = require('winston');
 const { celebrate, errors, Joi } = require('celebrate');
 
 const router = require('./routes/router');
 const { login, createUser } = require('./controllers/users');
-const NotFoundError = require('./errors/NotFoundError');
 const auth = require('./middlewares/auth');
 
 const app = express();
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3001, MONGO_URL = 'mongodb://localhost:27017/mestodb' } = process.env;
 
-mongoose.connect(NODE_ENV === 'production' ? DB_CONNECTION_STRING : 'mongodb://localhost:27017/mestodb', {
+mongoose.connect(MONGO_URL, {
   useNewUrlParser: true,
   useFindAndModify: false,
   useCreateIndex: true,
@@ -40,34 +39,12 @@ const errorLogger = expressWinston.errorLogger({
   format: winston.format.json(),
 });
 
-const options = {
-  origin: [
-    'http://localhost:3000',
-    'https://ostin.student.nomoredomains.club',
-  ],
-  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-  allowedHeaders: ['Content-Type', 'origin'],
-  credentials: true,
-};
+mongoose.connection.on('open', () => console.log('MongooseDB connection...'));
 
-app.use('*', cors(options));
+app.use(requestLogger);
+app.use(helmet());
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
-app.use(requestLogger);
-
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Headers', 'origin, content-type, accept');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
-  if (req.method === 'OPTIONS') {
-    res.send(200);
-  }
-  next();
-});
 
 app.get('/crash-test', () => {
   setTimeout(() => {
@@ -95,20 +72,12 @@ app.use('/', auth, router);
 app.use(errorLogger);
 app.use(errors());
 
-app.use('/*', () => {
-  throw new NotFoundError('Запрашиваемый ресурс не найден');
-});
-
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
-  const { statusCode = 500, message } = err;
-  res
-    .status(statusCode)
-    .send({
-      message: statusCode === 500
-        ? `На сервере произошла ошибка${err}`
-        : message,
-    });
+  if (err.status) {
+    return res.status(err.status).send({ message: err.message });
+  }
+  return res.status(500).send({ message: err.message });
 });
 
 app.listen(PORT, () => {
