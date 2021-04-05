@@ -1,7 +1,9 @@
-/* eslint-disable linebreak-style */
+/* eslint-disable no-console */
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
+const bodyParser = require('body-parser');
 const expressWinston = require('express-winston');
 const winston = require('winston');
 const { celebrate, errors, Joi } = require('celebrate');
@@ -36,6 +38,11 @@ const errorLogger = expressWinston.errorLogger({
   format: winston.format.json(),
 });
 
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(requestLogger);
+
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
   res.header('Access-Control-Allow-Headers', '*');
@@ -45,9 +52,6 @@ app.use((req, res, next) => {
   }
   next();
 });
-
-app.use(express.json());
-app.use(requestLogger);
 
 app.get('/crash-test', () => {
   setTimeout(() => {
@@ -71,8 +75,7 @@ app.post('/signup', celebrate({
 }),
 createUser);
 
-app.use(auth);
-app.use('/', router);
+app.use('/', auth, router);
 app.use(errorLogger);
 app.use(errors());
 
