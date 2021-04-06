@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 require('dotenv').config();
 
 const express = require('express');
@@ -27,13 +26,16 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 const options = {
   origin: [
-    'http://localhost:3001',
+    'http://localhost:3000',
     'https://ostin.student.nomoredomains.club',
+    'http://ostin.student.nomoredomains.club',
   ],
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  allowedHeaders: ['Content-Type', 'origin', 'Authorization', 'Accept'],
   credentials: true,
 };
-
-app.use('*', cors(options));
 
 const requestLogger = expressWinston.logger({
   transports: [
@@ -49,17 +51,9 @@ const errorLogger = expressWinston.errorLogger({
   format: winston.format.json(),
 });
 
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', '*');
-  res.header('Access-Control-Allow-Methods', 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS');
-  if (req.method === 'OPTIONS') {
-    res.send(200);
-  }
-  next();
-});
-
+app.use('*', cors(options));
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(requestLogger);
 
 app.get('/crash-test', () => {
