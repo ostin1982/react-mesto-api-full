@@ -78,7 +78,8 @@ app.post('/signup', celebrate({
 }),
 createUser);
 
-app.use('/', auth, router);
+app.use(auth);
+app.use('/', router);
 app.use(errorLogger);
 app.use(errors());
 
