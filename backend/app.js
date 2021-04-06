@@ -29,7 +29,12 @@ const options = {
 
 const app = express();
 
+app.use('*', cors(options));
+
 const { PORT = 3000 } = process.env;
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
@@ -37,24 +42,12 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useCreateIndex: true,
 });
 
-const requestLogger = expressWinston.logger({
+app.use(expressWinston.logger({
   transports: [
     new winston.transports.File({ filename: 'request.log' }),
   ],
   format: winston.format.json(),
-});
-
-const errorLogger = expressWinston.errorLogger({
-  transports: [
-    new winston.transports.File({ filename: 'error.log' }),
-  ],
-  format: winston.format.json(),
-});
-
-app.use('*', cors(options));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(requestLogger);
+}));
 
 app.get('/crash-test', () => {
   setTimeout(() => {
@@ -81,10 +74,17 @@ createUser);
 app.use(auth);
 app.use('/', routerCards);
 app.use('/', routerUsers);
-app.use(errorLogger);
+
+app.use(expressWinston.errorLogger({
+  transports: [
+    new winston.transports.File({ filename: 'error.log' }),
+  ],
+  format: winston.format.json(),
+}));
+
 app.use(errors());
 
-app.use('/*', () => {
+app.use('*', () => {
   throw new NotFoundError('Запрашиваемый ресурс не найден');
 });
 
