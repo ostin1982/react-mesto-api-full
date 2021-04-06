@@ -8,7 +8,8 @@ const expressWinston = require('express-winston');
 const winston = require('winston');
 const { celebrate, errors, Joi } = require('celebrate');
 
-const router = require('./routes/router');
+const routerCards = require('./routes/cards');
+const routerUsers = require('./routes/users');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
 const auth = require('./middlewares/auth');
@@ -34,7 +35,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useFindAndModify: false,
   useCreateIndex: true,
-  useUnifiedTopology: true,
 });
 
 const requestLogger = expressWinston.logger({
@@ -79,7 +79,8 @@ app.post('/signup', celebrate({
 createUser);
 
 app.use(auth);
-app.use('/', router);
+app.use('/', routerCards);
+app.use('/', routerUsers);
 app.use(errorLogger);
 app.use(errors());
 
