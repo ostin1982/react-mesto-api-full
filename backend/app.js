@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const helmet = require('helmet');
 const bodyParser = require('body-parser');
 const expressWinston = require('express-winston');
 const winston = require('winston');
@@ -14,32 +15,19 @@ const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
 const auth = require('./middlewares/auth');
 
-const options = {
-  origin: [
-    'http://localhost:3000',
-    'https://ostin.student.nomoredomains.club',
-    'http://ostin.student.nomoredomains.club',
-  ],
-  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-  allowedHeaders: ['Content-Type', 'origin', 'Authorization', 'Accept'],
-  credentials: true,
-};
-
 const app = express();
 
-app.use('*', cors(options));
+const { PORT = 3001 } = process.env;
 
-const { PORT = 3000 } = process.env;
-
+app.use(helmet());
+app.use(cors());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useFindAndModify: false,
   useCreateIndex: true,
+  useUnifiedTopology: true,
 });
 
 app.use(expressWinston.logger({
