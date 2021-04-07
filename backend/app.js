@@ -12,7 +12,7 @@ const routerUsers = require('./routes/users');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
 
-const { PORT = 3001 } = process.env;
+const { PORT = 3000 } = process.env;
 
 const app = express();
 
@@ -23,10 +23,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
-app.use(cors());
-
-app.use(helmet());
-app.use(bodyParser());
+mongoose.connection.on('open', () => console.log('MongooseDB connection...'));
 
 app.use(expressWinston.logger({
   transports: [
@@ -34,12 +31,17 @@ app.use(expressWinston.logger({
   ],
   format: winston.format.json(),
 }));
+app.use(helmet());
+app.use(cors());
+app.use(bodyParser());
 
-app.get('/crash-test', () => {
-  setTimeout(() => {
-    throw new Error('Сервер сейчас упадёт');
-  }, 0);
-});
+app.post('/signup', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required().min(8),
+  }),
+}),
+createUser);
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -49,13 +51,11 @@ app.post('/signin', celebrate({
 }),
 login);
 
-app.post('/signup', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-  }),
-}),
-createUser);
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 
 app.use('/', routerCards);
 app.use('/', routerUsers);
