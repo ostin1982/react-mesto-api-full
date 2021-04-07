@@ -14,11 +14,24 @@ const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
 const auth = require('./middlewares/auth');
 
+const { PORT = 3000 } = process.env;
+
+const app = express();
+
+mongoose.connect('mongodb://localhost:27017/mestodb', {
+  useNewUrlParser: true,
+  useFindAndModify: false,
+  useCreateIndex: true,
+  useUnifiedTopology: true,
+});
+
 const options = {
   origin: [
     'http://localhost:3000',
     'https://ostin.student.nomoredomains.club',
     'http://ostin.student.nomoredomains.club',
+    'https://api.ostin.student.nomoredomains.club',
+    'http://api.ostin.student.nomoredomains.club',
   ],
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   preflightContinue: false,
@@ -27,20 +40,10 @@ const options = {
   credentials: true,
 };
 
-const app = express();
-
 app.use('*', cors(options));
-
-const { PORT = 3000 } = process.env;
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-mongoose.connect('mongodb://localhost:27017/mestodb', {
-  useNewUrlParser: true,
-  useFindAndModify: false,
-  useCreateIndex: true,
-});
 
 app.use(expressWinston.logger({
   transports: [
