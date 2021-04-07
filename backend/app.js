@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const expressWinston = require('express-winston');
 const winston = require('winston');
@@ -34,7 +34,7 @@ app.use(expressWinston.logger({
 
 app.use(helmet());
 app.use(cors());
-app.use(bodyParser());
+app.use(cookieParser());
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
@@ -51,6 +51,12 @@ app.post('/signin', celebrate({
   }),
 }),
 login);
+
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 
 app.use('/', routerCards);
 app.use('/', routerUsers);
