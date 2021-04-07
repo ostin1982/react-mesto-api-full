@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
-const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const expressWinston = require('express-winston');
 const winston = require('winston');
 const { celebrate, errors, Joi } = require('celebrate');
@@ -39,7 +39,7 @@ const options = {
 
 app.use('*', cors(options));
 
-app.use(cookieParser());
+app.use(bodyParser());
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
