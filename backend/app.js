@@ -25,23 +25,14 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
-const options = {
-  origin: [
-    'http://localhost:3000',
-    'https://ostin.student.nomoredomains.club',
-    'http://ostin.student.nomoredomains.club',
-  ],
-  credentials: true,
-  optionsSuccessStatus: 200,
-  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-  preflightContinue: false,
-};
+const allowedCors = '*';
 
-app.use('*', cors(options));
+app.use(cors({
+  origin: allowedCors,
+}));
 
 app.use(bodyParser());
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+app.use(bodyParser.urlencoded({extended: false}));
 
 app.use(expressWinston.logger({
   transports: [
