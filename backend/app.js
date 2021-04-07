@@ -22,7 +22,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useFindAndModify: false,
   useCreateIndex: true,
-  useUnifiedTopology: true,
 });
 
 const options = {
@@ -76,7 +75,7 @@ app.use(auth);
 app.use('/cards', auth, routerCards);
 app.use('/users', auth, routerUsers);
 
-app.use(expressWinston.errorLogger({
+app.use(expressWinston.logger({
   transports: [
     new winston.transports.File({ filename: 'error.log' }),
   ],
