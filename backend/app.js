@@ -25,22 +25,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
-app.use((req, res, next) => {
-  res.set({
-    'Access-Control-Allow-Origin': [
-      'http://localhost:3000',
-      'https://ostin.student.nomoredomains.club',
-      'http://ostin.student.nomoredomains.club',
-    ],
-    'Access-Control-Allow-Methods': '*',
-    'Access-Control-Allow-Headers': '*',
-    'Access-Control-Allow-Credentials': true,
-    'Content-Security-Policy': 'default-src "self"; img-src *',
-    'Referrer-Policy': 'no-referrer',
-  });
-  next();
-});
-
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
