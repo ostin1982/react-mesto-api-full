@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
@@ -7,7 +9,7 @@ const NotFoundError = require('../errors/NotFoundError');
 const AuthenticationError = require('../errors/AuthenticationError');
 const ValidationError = require('../errors/ValidationError');
 
-const { JWT_SECRET = 'my-little-secret' } = process.env;
+const { JWT_SECRET } = process.env;
 
 const getUsers = (req, res, next) => User.find({})
   .orFail(() => {
