@@ -74,8 +74,9 @@ app.post('/signup', celebrate({
 }),
 createUser);
 
-app.use('/', auth, routerCards);
-app.use('/', auth, routerUsers);
+app.use(auth);
+app.use('/', routerCards);
+app.use('/', routerUsers);
 
 app.use(expressWinston.errorLogger({
   transports: [
