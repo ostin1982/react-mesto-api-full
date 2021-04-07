@@ -33,12 +33,15 @@ const options = {
   ],
   credentials: true,
   optionsSuccessStatus: 200,
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+  preflightContinue: false,
 };
 
 app.use('*', cors(options));
 
-app.use(bodyParser.json());
 app.use(bodyParser());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
 app.use(expressWinston.logger({
   transports: [
@@ -69,6 +72,7 @@ app.post('/signup', celebrate({
 }),
 createUser);
 
+app.use(auth);
 app.use('/cards', auth, routerCards);
 app.use('/users', auth, routerUsers);
 
