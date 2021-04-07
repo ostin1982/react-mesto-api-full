@@ -27,7 +27,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 app.use((req, res, next) => {
   res.set({
     'Access-Control-Allow-Origin': 'https://ostin.student.nomoredomains.club',
-    'Access-Control-Allow-Origin': 'https://api.ostin.student.nomoredomains.club',
     'Access-Control-Allow-Methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
     'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
     'Access-Control-Allow-Credentials': true,
@@ -40,8 +39,6 @@ app.use((req, res, next) => {
 app.use('*', cors());
 
 app.use(express.json());
-
-app.disable('x-powered-by');
 
 app.use(expressWinston.logger({
   transports: [
