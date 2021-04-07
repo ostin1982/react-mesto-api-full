@@ -11,7 +11,6 @@ const routerCards = require('./routes/cards');
 const routerUsers = require('./routes/users');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
-const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 
@@ -58,9 +57,8 @@ app.post('/signup', celebrate({
 }),
 createUser);
 
-app.use(auth);
-app.use('/cards', auth, routerCards);
-app.use('/users', auth, routerUsers);
+app.use('/', routerCards);
+app.use('/', routerUsers);
 
 app.use(expressWinston.logger({
   transports: [
