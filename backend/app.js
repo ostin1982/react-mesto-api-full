@@ -40,7 +40,17 @@ const options = {
   credentials: true,
 };
 
-app.use('*', cors(options));
+app.use(cors(options));
+
+app.use((req, res, next) => {
+  const { origin } = req.headers;
+
+  if (options.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+
+  next();
+});
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
