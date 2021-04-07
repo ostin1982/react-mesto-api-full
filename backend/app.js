@@ -37,7 +37,7 @@ const options = {
   preflightContinue: false,
 };
 
-app.use('*', cors(options));
+app.use(cors(options));
 
 app.use(bodyParser());
 app.use(bodyParser.urlencoded({extended: false}));
