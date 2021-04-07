@@ -32,8 +32,6 @@ const options = {
     'http://ostin.student.nomoredomains.club',
   ],
   credentials: true,
-  optionsSuccessStatus: 200,
-  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   preflightContinue: false,
 };
 
