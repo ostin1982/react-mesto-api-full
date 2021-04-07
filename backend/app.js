@@ -6,7 +6,6 @@ const bodyParser = require('body-parser');
 const expressWinston = require('express-winston');
 const winston = require('winston');
 const { celebrate, errors, Joi } = require('celebrate');
-const cors = require('cors');
 
 const routerCards = require('./routes/cards');
 const routerUsers = require('./routes/users');
@@ -23,8 +22,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useFindAndModify: false,
   useCreateIndex: true,
 });
-
-app.use(cors());
 
 app.use(bodyParser());
 app.use(bodyParser.urlencoded({ extended: false }));
