@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 const expressWinston = require('express-winston');
 const winston = require('winston');
 const { celebrate, errors, Joi } = require('celebrate');
+const cors = require('cors');
 
 const routerCards = require('./routes/cards');
 const routerUsers = require('./routes/users');
@@ -40,6 +41,7 @@ app.use((req, res, next) => {
   next();
 });
 
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
