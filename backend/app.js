@@ -32,6 +32,7 @@ const options = {
     'http://ostin.student.nomoredomains.club',
   ],
   credentials: true,
+  optionsSuccessStatus: 200,
 };
 
 app.use('*', cors(options));
