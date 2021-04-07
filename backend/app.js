@@ -14,7 +14,7 @@ const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
 const auth = require('./middlewares/auth');
 
-const { PORT = 3000 } = process.env;
+const { PORT = 3001 } = process.env;
 
 const app = express();
 
@@ -25,32 +25,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
-const options = {
-  origin: [
-    'http://localhost:3000',
-    'https://ostin.student.nomoredomains.club',
-    'http://ostin.student.nomoredomains.club',
-    'https://api.ostin.student.nomoredomains.club',
-    'http://api.ostin.student.nomoredomains.club',
-  ],
-  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-  allowedHeaders: ['Content-Type', 'origin', 'Authorization', 'Accept'],
-  credentials: true,
-};
-
-app.use(cors(options));
-
-app.use((req, res, next) => {
-  const { origin } = req.headers;
-
-  if (options.includes(origin)) {
-    res.header('Access-Control-Allow-Origin', origin);
-  }
-
-  next();
-});
+app.use(cors());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -84,9 +59,8 @@ app.post('/signup', celebrate({
 }),
 createUser);
 
-app.use(auth);
-app.use('/', routerCards);
-app.use('/', routerUsers);
+app.use('/', auth, routerCards);
+app.use('/', auth, routerUsers);
 
 app.use(expressWinston.errorLogger({
   transports: [
