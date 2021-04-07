@@ -2,7 +2,6 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
 const bodyParser = require('body-parser');
 const expressWinston = require('express-winston');
 const winston = require('winston');
@@ -25,22 +24,19 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
-const options = {
-  origin: [
-    'http://localhost:3000',
-    'https://ostin.student.nomoredomains.club',
-    'http://ostin.student.nomoredomains.club',
-    'https://api.ostin.student.nomoredomains.club',
-    'http://api.ostin.student.nomoredomains.club',
-  ],
-  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-  allowedHeaders: ['Content-Type', 'origin', 'Authorization', 'Accept'],
-  credentials: true,
-};
+app.use((req, res, next) => {
+  res.set({
+    'Access-Control-Allow-Origin': 'https://ostin.student.nomoredomains.club',
+    'Access-Control-Allow-Methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
+    'Access-Control-Allow-Credentials': true,
+    'Content-Security-Policy': 'default-src "self"; img-src *',
+    'Referrer-Policy': 'no-referrer',
+  });
+  next();
+});
 
-app.use('*', cors(options));
+app.use('*', (req, res) => res.status(200).end());
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
