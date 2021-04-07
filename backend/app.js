@@ -2,6 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors');
 const expressWinston = require('express-winston');
 const winston = require('winston');
 const { celebrate, errors, Joi } = require('celebrate');
@@ -16,7 +17,7 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
-mongoose.connect('mongodb://localhost:7017/mestodb', {
+mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useFindAndModify: false,
   useCreateIndex: true,
@@ -35,7 +36,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('*', (req, res) => res.status(200).end());
+app.use('*', cors());
 
 app.use(express.json());
 
@@ -71,8 +72,8 @@ app.post('/signup', celebrate({
 createUser);
 
 app.use(auth);
-app.use('/cards', routerCards);
-app.use('/users', routerUsers);
+app.use('/', routerCards);
+app.use('/', routerUsers);
 
 app.use(expressWinston.errorLogger({
   transports: [
