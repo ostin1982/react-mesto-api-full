@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const helmet = require('helmet');
 const expressWinston = require('express-winston');
 const winston = require('winston');
 const { celebrate, errors, Joi } = require('celebrate');
@@ -20,18 +21,13 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
   useFindAndModify: false,
   useCreateIndex: true,
+  useUnifiedTopology: true,
 });
 
-app.use(cors({
-  ' allowedHeaders ': ['sessionId', 'Content-Type'],
-  ' exposedHeaders ': ['sessionId'],
-  ' origin ': '*',
-  ' methods ': 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  ' preflightContinue ': false,
-}));
+app.use(cors());
 
+app.use(helmet());
 app.use(bodyParser());
-app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(expressWinston.logger({
   transports: [
