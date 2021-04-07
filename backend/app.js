@@ -2,7 +2,6 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
 const bodyParser = require('body-parser');
 const expressWinston = require('express-winston');
 const winston = require('winston');
@@ -31,8 +30,6 @@ app.use((req, res, next) => {
       'http://localhost:3000',
       'https://ostin.student.nomoredomains.club',
       'http://ostin.student.nomoredomains.club',
-      'https://api.ostin.student.nomoredomains.club',
-      'http://api.ostin.student.nomoredomains.club',
     ],
     'Access-Control-Allow-Methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
     'Access-Control-Allow-Headers': 'Origin, X-Requested-With, Content-Type, Accept',
