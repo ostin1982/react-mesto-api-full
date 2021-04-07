@@ -32,7 +32,6 @@ const options = {
     'http://ostin.student.nomoredomains.club',
   ],
   credentials: true,
-  preflightContinue: false,
 };
 
 app.use(cors(options));
