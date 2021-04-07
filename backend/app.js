@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
-const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const expressWinston = require('express-winston');
 const winston = require('winston');
@@ -34,7 +34,7 @@ app.use(expressWinston.logger({
 
 app.use(helmet());
 app.use(cors());
-app.use(cookieParser());
+app.use(bodyParser());
 
 app.post('/signup', celebrate({
   body: Joi.object().keys({
