@@ -41,7 +41,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 
 app.use(cors(options));
 app.use(helmet());
-app.use(cors());
 app.use(bodyParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 
