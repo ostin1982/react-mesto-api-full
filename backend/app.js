@@ -23,6 +23,7 @@ const options = {
   origin: [
     'http://localhost:3000',
     'https://ostin.student.nomoredomains.club',
+    'http://ostin.student.nomoredomains.club',
   ],
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   preflightContinue: false,
