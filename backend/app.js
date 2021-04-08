@@ -39,7 +39,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
-app.use('*', cors(options));
+app.use(cors(options));
 app.use(helmet());
 app.use(cors());
 app.use(bodyParser());
