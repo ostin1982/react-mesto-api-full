@@ -4,12 +4,16 @@ const bcrypt = require('bcrypt');
 const User = require('../models/user');
 const RegistrationError = require('../errors/RegistrationError');
 const NotFoundError = require('../errors/NotFoundError');
+const AuthenticationError = require('../errors/AuthenticationError');
 const ValidationError = require('../errors/ValidationError');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 const getUsers = (req, res, next) => User.find({})
-  .then((users) => res.status(200).send(users))
+  .orFail(() => {
+    throw new NotFoundError('Нет такого пользователя');
+  })
+  .then((users) => res.send(users))
   .catch(next);
 
 const getProfile = (req, res, next) => {
@@ -28,67 +32,31 @@ const getProfile = (req, res, next) => {
 };
 
 const createProfile = (req, res, next) => User.findById(req.user._id)
-  .then((user) => {
-    if (!user) {
-      throw new NotFoundError('Нет такого пользователя');
-    } else {
-      res.status(200).send(user);
-    }
+  .orFail(() => {
+    throw new ValidationError('Ошибка в заполнении полей');
   })
-  .catch((err) => {
-    if (err.name === 'CastError') {
-      throw new ValidationError('Ошибка в заполнении полей');
-    }
-  })
+  .then((user) => res.status(200).send(user))
   .catch(next);
 
 const updateProfile = (req, res, next) => {
   const { name, about } = req.body;
-
-  User.findByIdAndUpdate(req.user._id, { name, about }, {
-    new: true,
-    runValidators: true,
-    upsert: true,
-  })
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Нет такого пользователя');
-      } else {
-        res.status(200).send(user);
-      }
-    })
-    .catch((err) => {
+  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
+    .orFail((err) => {
       if (err.name === 'ValidationError') {
         throw new ValidationError('Ошибка в заполнении полей');
-      } else if (err.name === 'CastError') {
-        throw new ValidationError('Ошибка в заполнении полей');
       }
     })
+    .then((user) => res.status(200).send(user))
     .catch(next);
 };
 
 const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
-
-  User.findByIdAndUpdate(req.user._id, { avatar }, {
-    new: true,
-    runValidators: true,
-    upsert: true,
-  })
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Нет такого пользователя');
-      } else {
-        res.status(200).send(user);
-      }
+  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
+    .orFail(() => {
+      throw new ValidationError('Ошибка в заполнении поля');
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        throw new ValidationError('Ошибка в заполнении полей');
-      } else if (err.name === 'CastError') {
-        throw new ValidationError('Ошибка в заполнении полей');
-      }
-    })
+    .then((user) => res.status(200).send(user))
     .catch(next);
 };
 
@@ -101,41 +69,21 @@ const login = (req, res, next) => {
         { _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' },
       );
+
       res.status(200).send({ token });
+    })
+    .catch(() => {
+      throw new AuthenticationError('Необходима авторизация');
     })
     .catch(next);
 };
 
 const createUser = (req, res, next) => {
-  const {
-    name, about, avatar, email, password,
-  } = req.body;
-
-  User.findOne({ email })
-    .then((user) => {
-      if (user) {
-        throw new RegistrationError('Пользователь с таким email уже существует');
-      }
-      return bcrypt.hash(password, 10);
-    })
-    .then((hash) => User.create({
-      name, about, avatar, email, password: hash,
-    })
-      .then((user) => res.status(200).send({
-        user: {
-          name: user.name,
-          about: user.about,
-          avatar: user.avatar,
-          _id: user._id,
-          email: user.email,
-        },
-      }))
-      .catch((err) => {
-        if (err.name === 'ValidationError') {
-          throw new NotFoundError('Нет такого пользователя');
-        }
-      }))
-    .catch(next);
+  const { body } = req;
+  bcrypt.hash(body.password, 10)
+    .then((hash) => User.create({ ...body, password: hash }))
+    .then((user) => res.send({ data: `Пользователь ${user.email} создан` }))
+    .catch((err) => RegistrationError(err, next));
 };
 
 module.exports = {

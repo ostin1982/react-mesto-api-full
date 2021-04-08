@@ -4,7 +4,6 @@ const ProfileError = require('../errors/ProfileError');
 const NotFoundError = require('../errors/NotFoundError');
 
 const getCards = (req, res, next) => Card.find({})
-  .populate(['likes', 'owner'])
   .then((cards) => res.status(200).send(cards))
   .catch(next);
 
@@ -12,7 +11,6 @@ const createCard = (req, res, next) => {
   Card.create({ ...req.body, owner: req.user._id })
     .then((card) => {
       Card.findById(card._id)
-        .populate('owner')
         .then((data) => res.send(data))
         .catch(() => {
           throw new NotFoundError('Карточки с данным id не существует');
@@ -41,7 +39,6 @@ const likeCard = (req, res, next) => Card.findByIdAndUpdate(
   { $addToSet: { likes: req.user._id } },
   { new: true },
 )
-  .populate(['owner', 'likes'])
   .orFail(() => { throw new NotFoundError('Документ не найден'); })
   .then((card) => res.send(card))
   .catch((err) => {
@@ -56,7 +53,6 @@ const dislikeCard = (req, res, next) => Card.findByIdAndUpdate(
   { $pull: { likes: req.user._id } },
   { new: true },
 )
-  .populate(['owner', 'likes'])
   .orFail(() => { throw new NotFoundError('Карточки с данным id не существует'); })
   .then((card) => res.status(200).send(card))
   .catch((err) => {
