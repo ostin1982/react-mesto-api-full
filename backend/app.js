@@ -76,8 +76,8 @@ app.get('/crash-test', () => {
 });
 
 app.use(auth);
-app.use('/', routerCards);
-app.use('/', routerUsers);
+app.use('/cards', auth, routerCards);
+app.use('/users', auth, routerUsers);
 
 app.use(expressWinston.logger({
   transports: [
