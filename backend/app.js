@@ -29,7 +29,6 @@ const options = {
   preflightContinue: false,
   optionsSuccessStatus: 204,
   allowedHeaders: ['Content-Type', 'origin', 'Authorization', 'Accept'],
-  credentials: true,
 };
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
