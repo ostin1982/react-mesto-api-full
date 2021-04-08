@@ -20,11 +20,6 @@ const { PORT = 3000 } = process.env;
 const app = express();
 
 const options = {
-  origin: [
-    'http://localhost:3000',
-    'https://ostin.student.nomoredomains.club',
-    'http://ostin.student.nomoredomains.club',
-  ],
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
   preflightContinue: false,
   optionsSuccessStatus: 204,
