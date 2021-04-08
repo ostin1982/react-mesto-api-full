@@ -13,10 +13,23 @@ const routerCards = require('./routes/cards');
 const routerUsers = require('./routes/users');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
+const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 
 const app = express();
+
+const options = {
+  origin: [
+    'http://localhost:3000',
+    'https://ostin.student.nomoredomains.club',
+  ],
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+  allowedHeaders: ['Content-Type', 'origin', 'Authorization', 'Accept'],
+  credentials: true,
+};
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
@@ -25,6 +38,12 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
+app.use('*', cors(options));
+app.use(helmet());
+app.use(cors());
+app.use(bodyParser());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(expressWinston.logger({
   transports: [
     new winston.transports.File({ filename: 'request.log' }),
@@ -32,14 +51,13 @@ app.use(expressWinston.logger({
   format: winston.format.json(),
 }));
 
-app.use(helmet());
-app.use(cors());
-app.use(bodyParser());
-
 app.post('/signup', celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
+    name: Joi.string().min(2).max(30),
+    about: Joi.string().min(2).max(30),
+    avatar: Joi.string().pattern(new RegExp(/^(http|https):\/\/(www\.)?[\w-._~:/?#[\]@!$&'()*+,;=%]+#?$/i)),
   }),
 }),
 createUser);
@@ -58,6 +76,7 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
+app.use(auth);
 app.use('/', routerCards);
 app.use('/', routerUsers);
 
