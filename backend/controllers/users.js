@@ -1,3 +1,5 @@
+const { NODE_ENV, JWT_SECRET } = process.env;
+
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
@@ -6,8 +8,6 @@ const RegistrationError = require('../errors/RegistrationError');
 const NotFoundError = require('../errors/NotFoundError');
 const AuthenticationError = require('../errors/AuthenticationError');
 const ValidationError = require('../errors/ValidationError');
-
-const { NODE_ENV, JWT_SECRET } = process.env;
 
 const getUsers = (req, res, next) => User.find({})
   .orFail(() => {
@@ -70,12 +70,15 @@ const login = (req, res, next) => {
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' },
       );
 
-      res.status(200).send({ token });
+      res.send({ token, user });
     })
-    .catch(() => {
-      throw new AuthenticationError('Необходима авторизация');
-    })
-    .catch(next);
+    .catch((err) => {
+      if (err.name === 'Error') {
+        next(new AuthenticationError('Необходима авторизация'));
+      } else {
+        next(err);
+      }
+    });
 };
 
 const createUser = (req, res, next) => {
