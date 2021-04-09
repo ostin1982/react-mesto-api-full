@@ -25,10 +25,6 @@ const options = {
     'https://ostin.student.nomoredomains.club',
     'http://ostin.student.nomoredomains.club',
   ],
-  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-  allowedHeaders: ['Content-Type', 'origin', 'Authorization', 'Accept'],
   credentials: true,
 };
 
@@ -40,7 +36,6 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 app.use('*', cors(options));
-app.use(helmet());
 app.use(bodyParser());
 app.use(bodyParser.urlencoded({ extended: true }));
 
