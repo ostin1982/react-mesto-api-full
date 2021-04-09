@@ -29,6 +29,7 @@ const options = {
   preflightContinue: false,
   optionsSuccessStatus: 204,
   allowedHeaders: ['Content-Type', 'origin', 'Authorization', 'Accept'],
+  credentials: true,
 };
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
@@ -75,7 +76,6 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.use(auth);
 app.use('/cards', auth, routerCards);
 app.use('/users', auth, routerUsers);
 
