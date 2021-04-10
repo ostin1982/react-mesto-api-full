@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const expressWinston = require('express-winston');
 const winston = require('winston');
 const { celebrate, errors, Joi } = require('celebrate');
@@ -20,10 +20,11 @@ const app = express();
 
 const options = {
   origin: [
-    '*',
+    'http://ostin.student.nomoredomains.club',
+    'https://ostin.student.nomoredomains.club',
   ],
   methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-  preflightContinue: false,
+  credentials: true,
   optionsSuccessStatus: 204,
   allowedHeaders: ['Content-Type', 'origin', 'Authorization'],
 };
@@ -35,8 +36,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 app.use(cors(options));
-app.use(bodyParser());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 app.use(expressWinston.logger({
   transports: [
