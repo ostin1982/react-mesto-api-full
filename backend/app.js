@@ -6,8 +6,7 @@ const expressWinston = require('express-winston');
 const winston = require('winston');
 const { celebrate, errors, Joi } = require('celebrate');
 
-const routerCards = require('./routes/cards');
-const routerUsers = require('./routes/users');
+const router = require('./routes/router');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
 const auth = require('./middlewares/auth');
@@ -64,8 +63,7 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.use('/cards', auth, routerCards);
-app.use('/users', auth, routerUsers);
+app.use('/', auth, router);
 
 app.use(expressWinston.logger({
   transports: [
