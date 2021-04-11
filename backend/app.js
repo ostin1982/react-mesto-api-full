@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const expressWinston = require('express-winston');
 const winston = require('winston');
 const { celebrate, errors, Joi } = require('celebrate');
-
+const bodyParser = require('body-parser');
 const router = require('./routes/router');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
@@ -33,6 +33,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 app.use(express.json());
+app.use(bodyParser());
 
 app.use(expressWinston.logger({
   transports: [
