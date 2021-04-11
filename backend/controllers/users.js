@@ -103,7 +103,7 @@ const createUser = (req, res, next) => {
         throw new AuthenticationError('Необходима авторизация');
       }
       if (err.name === 'MongoError' || err.code === '11000') {
-        throw new RegistrationError('Такие данны уже зарегистрированы');
+        throw new RegistrationError('Пользователь с такими данными уже зарегистирирован');
       }
     })
     .catch(next);
