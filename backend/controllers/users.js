@@ -9,54 +9,61 @@ const NotFoundError = require('../errors/NotFoundError');
 const AuthenticationError = require('../errors/AuthenticationError');
 const ValidationError = require('../errors/ValidationError');
 
-const getUsers = (req, res, next) => User.find({})
-  .orFail(() => {
-    throw new NotFoundError('Нет такого пользователя');
+const getUsers = (req, res, next) => User.findById(req.user._id)
+  .then((user) => {
+    if (!user) {
+      throw new NotFoundError('Нет пользователя с таким id');
+    }
+    return res.status(200).send({ data: user });
   })
-  .then((users) => res.send(users))
   .catch(next);
 
 const getProfile = (req, res, next) => {
-  const {
-    email, password,
-  } = req.body;
-  User.findById(req.params._id)
-    .orFail((err) => {
-      if (err.name === 'ValidationError') {
-        throw new ValidationError('Ошибка в заполнении полей');
+  User.find({})
+    .then((users) => {
+      if (!users) {
+        throw new NotFoundError('Нет пользователя с таким id');
       }
-      throw new RegistrationError(`${email} или ${password} уже используется`);
+      res.status(200).send(users);
     })
-    .then((user) => res.status(200).send(user))
     .catch(next);
 };
 
-const createProfile = (req, res, next) => User.findById(req.user._id)
-  .orFail(() => {
-    throw new ValidationError('Ошибка в заполнении полей');
+const createProfile = (req, res, next) => User.findById(req.params.userId)
+  .then((user) => {
+    if (!user) {
+      throw new NotFoundError('Нет пользователя с таким id');
+    }
+    res.status(200).send(user);
   })
-  .then((user) => res.status(200).send(user))
-  .catch(next);
+  .catch((err) => {
+    if (err.name === 'CastError') {
+      next(new ValidationError('Ошибка в заполнении полей'));
+    }
+    next(err);
+  });
 
 const updateProfile = (req, res, next) => {
-  const { name, about } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name, about }, { new: true, runValidators: true })
-    .orFail((err) => {
-      if (err.name === 'ValidationError') {
+  User.findByIdAndUpdate(req.user._id, { name: req.body.name, about: req.body.about },
+    { runValidators: true })
+    .then((user) => {
+      if (!user) {
         throw new ValidationError('Ошибка в заполнении полей');
       }
+      res.status(200).send({ data: user });
     })
-    .then((user) => res.status(200).send(user))
     .catch(next);
 };
 
 const updateAvatar = (req, res, next) => {
-  const { avatar } = req.body;
-  User.findByIdAndUpdate(req.user._id, { avatar }, { new: true, runValidators: true })
-    .orFail(() => {
-      throw new ValidationError('Ошибка в заполнении поля');
+  User.findByIdAndUpdate(req.user._id,
+    { avatar: req.body.avatar }, { runValidators: true })
+    .then((user) => {
+      if (!user) {
+        throw new ValidationError('Ошибка в заполнении полей');
+      }
+      res.status(200).send({ data: user });
     })
-    .then((user) => res.status(200).send(user))
     .catch(next);
 };
 
@@ -70,7 +77,7 @@ const login = (req, res, next) => {
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' },
       );
 
-      res.send({ token, user });
+      res.send({ token });
     })
     .catch((err) => {
       if (err.name === 'Error') {
@@ -87,14 +94,18 @@ const createUser = (req, res, next) => {
   } = req.body;
   bcrypt.hash(password, 10)
     .then((hash) => User.create({
-      name,
-      about,
-      avatar,
-      email,
-      password: hash,
+      name, about, avatar, email, password: hash,
     }))
-    .then((user) => res.send({ data: `Пользователь ${user.email} создан` }))
-    .catch((err) => RegistrationError(err, next));
+    .then((user) => res.status(200).send({ mail: user.email }))
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        throw new AuthenticationError('Необходима авторизация');
+      }
+      if (err.name === 'MongoError' || err.code === '11000') {
+        throw new RegistrationError('Такие данны уже зарегистрированы');
+      }
+    })
+    .catch(next);
 };
 
 module.exports = {
