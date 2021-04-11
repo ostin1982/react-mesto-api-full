@@ -13,23 +13,23 @@ const createCard = (req, res, next) => {
       Card.findById(card._id)
         .then((data) => res.send(data))
         .catch(() => {
-          throw new NotFoundError('Карточки с данным id не существует');
+          throw new NotFoundError('{#label} Карточки с данным id не существует');
         });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new ValidationError('Ошибка в заполнении полей');
+        throw new ValidationError('{#label} Ошибка в заполнении полей');
       }
     })
     .catch(next);
 };
 
 const deleteCard = (req, res, next) => Card.findByIdAndDelete(req.params._id)
-  .orFail(new NotFoundError(`Not found: ${req.params._id}`))
+  .orFail(new NotFoundError(`{#label} Not found: ${req.params._id}`))
   .then((card) => res.status(200).send(card))
   .catch((err) => {
     if (err.name === 'CastError' || err.message === 'Not found') {
-      throw new ProfileError('У вас нет прав на данное дейтвие');
+      throw new ProfileError('{#label} У вас нет прав на данное дейтвие');
     }
   })
   .catch(next);
@@ -39,11 +39,11 @@ const likeCard = (req, res, next) => Card.findByIdAndUpdate(
   { $addToSet: { likes: req.user._id } },
   { new: true },
 )
-  .orFail(() => { throw new NotFoundError('Документ не найден'); })
+  .orFail(() => { throw new NotFoundError('{#label} Документ не найден'); })
   .then((card) => res.send(card))
   .catch((err) => {
     if (err.name === 'CastError' || err.message === 'Not found') {
-      throw new NotFoundError('Карточки с данным id не существует');
+      throw new NotFoundError('{#label} Карточки с данным id не существует');
     }
   })
   .catch(next);
@@ -53,11 +53,11 @@ const dislikeCard = (req, res, next) => Card.findByIdAndUpdate(
   { $pull: { likes: req.user._id } },
   { new: true },
 )
-  .orFail(() => { throw new NotFoundError('Карточки с данным id не существует'); })
+  .orFail(() => { throw new NotFoundError('{#label} Карточки с данным id не существует'); })
   .then((card) => res.status(200).send(card))
   .catch((err) => {
     if (err.name === 'CastError' || err.message === 'Not found') {
-      throw new NotFoundError('Карточки с данным id не существует');
+      throw new NotFoundError('{#label} Карточки с данным id не существует');
     }
   })
   .catch(next);

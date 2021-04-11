@@ -12,7 +12,7 @@ const ValidationError = require('../errors/ValidationError');
 const getUsers = (req, res, next) => User.findById(req.user._id)
   .then((user) => {
     if (!user) {
-      throw new NotFoundError('Нет пользователя с таким id');
+      throw new NotFoundError('{#label} Нет пользователя с таким id');
     }
     return res.status(200).send({ data: user });
   })
@@ -22,7 +22,7 @@ const getProfile = (req, res, next) => {
   User.find({})
     .then((users) => {
       if (!users) {
-        throw new NotFoundError('Нет пользователя с таким id');
+        throw new NotFoundError('{#label} Нет пользователя с таким id');
       }
       res.status(200).send(users);
     })
@@ -38,7 +38,7 @@ const createProfile = (req, res, next) => User.findById(req.params.userId)
   })
   .catch((err) => {
     if (err.name === 'CastError') {
-      next(new ValidationError('Ошибка в заполнении полей'));
+      next(new ValidationError('{#label} Ошибка в заполнении полей'));
     }
     next(err);
   });
@@ -48,7 +48,7 @@ const updateProfile = (req, res, next) => {
     { runValidators: true })
     .then((user) => {
       if (!user) {
-        throw new ValidationError('Ошибка в заполнении полей');
+        throw new ValidationError('{#label} Ошибка в заполнении полей');
       }
       res.status(200).send({ data: user });
     })
@@ -60,7 +60,7 @@ const updateAvatar = (req, res, next) => {
     { avatar: req.body.avatar }, { runValidators: true })
     .then((user) => {
       if (!user) {
-        throw new ValidationError('Ошибка в заполнении полей');
+        throw new ValidationError('{#label} Ошибка в заполнении полей');
       }
       res.status(200).send({ data: user });
     })
@@ -81,7 +81,7 @@ const login = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'Error') {
-        next(new AuthenticationError('Необходима авторизация'));
+        next(new AuthenticationError('{#label} Необходима авторизация'));
       } else {
         next(err);
       }
@@ -99,10 +99,10 @@ const createUser = (req, res, next) => {
     .then((user) => res.status(200).send({ mail: user.email }))
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
-        throw new AuthenticationError('Необходима авторизация');
+        throw new AuthenticationError('{#label} Необходима авторизация');
       }
       if (err.name === 'MongoError' || err.code === '11000') {
-        throw new RegistrationError('Такие данны уже зарегистрированы');
+        throw new RegistrationError('{#label} Такие данны уже зарегистрированы');
       }
     })
     .catch(next);

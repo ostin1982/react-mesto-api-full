@@ -2,11 +2,9 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 const expressWinston = require('express-winston');
 const winston = require('winston');
 const { celebrate, errors, Joi } = require('celebrate');
-const cors = require('cors');
 
 const routerCards = require('./routes/cards');
 const routerUsers = require('./routes/users');
@@ -79,7 +77,7 @@ app.use(expressWinston.logger({
 app.use(errors());
 
 app.use('*', () => {
-  throw new NotFoundError('Запрашиваемый ресурс не найден');
+  throw new NotFoundError('{#label} Запрашиваемый ресурс не найден');
 });
 
 // eslint-disable-next-line no-unused-vars
