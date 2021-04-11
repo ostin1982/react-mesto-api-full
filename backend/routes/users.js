@@ -2,42 +2,30 @@ const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 
 const {
-  getUsers, getProfile, createProfile, updateProfile, updateAvatar, login, createUser,
+  getUsers, getProfile, createProfile, updateProfile, updateAvatar,
 } = require('../controllers/users');
 
 router.get('/users', getUsers);
-router.get('/users/:userId', getProfile);
-router.post('/users', createProfile);
+router.get('/users/me', getProfile);
 
-router.patch('/users/me', celebrate({
+router.get('/users/:userId', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(30),
-    about: Joi.string().min(2).max(30).required(),
+    userId: Joi.string().length(24).hex(),
   }),
 }), updateProfile);
 
-router.patch('/users/me/avatar', celebrate({
+router.patch('/users/me', celebrate({
   body: Joi.object().keys({
     // eslint-disable-next-line
     avatar: Joi.string().pattern(/^https?:\/\/(www\.)?[\w\-\/\.a-z#?]{1,}/i).required(),
   }),
 }), updateAvatar);
 
-router.post('/signin', celebrate({
+router.patch('/users/me/avatar', celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
+    name: Joi.string().required().min(2).max(30),
+    about: Joi.string().required().min(2).max(30),
   }),
-}), login);
-
-router.post('/signup', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-    name: Joi.string().min(2).max(30),
-    avatar: Joi.string(),
-    about: Joi.string().min(2).max(30),
-  }),
-}), createUser);
+}), createProfile);
 
 module.exports = router;

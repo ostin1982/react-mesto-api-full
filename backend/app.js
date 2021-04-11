@@ -77,7 +77,7 @@ app.use(expressWinston.logger({
 app.use(errors());
 
 app.use('*', () => {
-  throw new NotFoundError('{#label} Запрашиваемый ресурс не найден');
+  throw new NotFoundError('Запрашиваемый ресурс не найден');
 });
 
 // eslint-disable-next-line no-unused-vars
