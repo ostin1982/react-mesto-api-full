@@ -8,7 +8,9 @@ const getCards = (req, res, next) => Card.find({})
   .catch(next);
 
 const createCard = (req, res, next) => {
-  Card.create({ ...req.body, owner: req.user._id })
+  const { name, link } = req.body;
+
+  Card.create({ name, link, owner: req.user._id })
     .then((card) => {
       Card.findById(card._id)
         .then((data) => res.send(data))
