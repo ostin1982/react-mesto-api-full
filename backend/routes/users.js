@@ -4,13 +4,12 @@ const { celebrate, Joi } = require('celebrate');
 const {
   getUsers, getProfile, createProfile, updateProfile, updateAvatar, login, createUser,
 } = require('../controllers/users');
-const auth = require('../middlewares/auth');
 
-router.get('/users', auth, getUsers);
-router.get('/users/:userId', auth, getProfile);
-router.post('/users', auth, createProfile);
+router.get('/users', getUsers);
+router.get('/users/:userId', getProfile);
+router.post('/users', createProfile);
 
-router.patch('/users/me', auth, celebrate({
+router.patch('/users/me', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     about: Joi.string().min(2).max(30).required(),

@@ -82,9 +82,17 @@ const login = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
-  const { body } = req;
-  bcrypt.hash(body.password, 10)
-    .then((hash) => User.create({ ...body, password: hash }))
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    }))
     .then((user) => res.send({ data: `Пользователь ${user.email} создан` }))
     .catch((err) => RegistrationError(err, next));
 };
