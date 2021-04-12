@@ -6,8 +6,8 @@ const {
 } = require('../controllers/users');
 const auth = require('../middlewares/auth');
 
-router.get('/', getUsers);
-router.get('/:userId', getProfile);
+router.get('/', auth, getUsers);
+router.get('/:userId', auth, getProfile);
 router.get('/', celebrate({
   params: {
     userId: Joi.string().required().length(24).hex(),
@@ -21,21 +21,21 @@ router.patch('/me', auth, celebrate({
   }),
 }), updateProfile);
 
-router.patch('/me/avatar', celebrate({
+router.patch('/me/avatar', auth, celebrate({
   body: Joi.object().keys({
     // eslint-disable-next-line
     avatar: Joi.string().pattern(/^https?:\/\/(www\.)?[\w\-\/\.a-z#?]{1,}/i).required(),
   }),
 }), updateAvatar);
 
-router.post('/signin', celebrate({
+router.post('/signin', auth, celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
   }),
 }), login);
 
-router.post('/signup', celebrate({
+router.post('/signup', auth, celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8),
