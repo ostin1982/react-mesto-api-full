@@ -2,12 +2,10 @@ require('dotenv').config();
 
 const express = require('express');
 const mongoose = require('mongoose');
-const cors = require('cors');
 const expressWinston = require('express-winston');
 const winston = require('winston');
 const { celebrate, errors, Joi } = require('celebrate');
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
 const router = require('./routes/router');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
@@ -34,10 +32,8 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
-app.use(cors());
-app.use(cookieParser());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(bodyParser());
 
 app.use(expressWinston.logger({
   transports: [
