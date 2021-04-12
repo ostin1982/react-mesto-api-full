@@ -15,15 +15,11 @@ router.post('/', celebrate({
   }),
 }), createCard);
 
-router.delete('/:cardId', celebrate({
-  params: {
-    cardId: Joi.string().required().length(24).hex(),
-  },
-}), deleteCard);
+router.delete('/:cardId', deleteCard);
 
 router.put('/:cardId/likes', celebrate({
   params: Joi.object().keys({
-    cardId: Joi.string().length(24).hex(),
+    cardId: Joi.string().length().hex(),
   }),
 }), likeCard);
 
