@@ -26,15 +26,24 @@ const createCard = (req, res, next) => {
     .catch(next);
 };
 
-const deleteCard = (req, res, next) => Card.findByIdAndDelete(req.params._id)
-  .orFail(new NotFoundError(`Not found: ${req.params._id}`))
-  .then((card) => res.status(200).send(card))
-  .catch((err) => {
-    if (err.name === 'CastError' || err.message === 'Not found') {
-      throw new ProfileError('У вас нет прав на данное дейтвие');
-    }
-  })
-  .catch(next);
+const deleteCard = (req, res, next) => {
+  const { cardId } = req.params;
+  Card.findByIdAndDelete(cardId)
+    .orFail(new NotFoundError('Нет карточки с такими данными'))
+    .then((card) => {
+      if (card.owner.toString() !== req.user._id) {
+        throw new ProfileError('У вас нет прав на данное дейтвие');
+      } else {
+        Card.findByIdAndDelete(req.params.cardId)
+          .then((delcard) => res.send({ delcard }))
+          .catch(next);
+      }
+    })
+    .catch((err) => {
+      throw err;
+    })
+    .catch(next);
+};
 
 const likeCard = (req, res, next) => Card.findByIdAndUpdate(
   req.params._id,
