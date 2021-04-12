@@ -6,22 +6,22 @@ const {
 } = require('../controllers/users');
 const auth = require('../middlewares/auth');
 
-router.get('/users', getUsers);
-router.get('/users/:userId', getProfile);
-router.get('/users', celebrate({
+router.get('/', getUsers);
+router.get('/:userId', getProfile);
+router.get('/', celebrate({
   params: {
     userId: Joi.string().required().length(24).hex(),
   },
 }), createProfile);
 
-router.patch('/users/me', auth, celebrate({
+router.patch('/me', auth, celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     about: Joi.string().min(2).max(30).required(),
   }),
 }), updateProfile);
 
-router.patch('/users/me/avatar', celebrate({
+router.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
     // eslint-disable-next-line
     avatar: Joi.string().pattern(/^https?:\/\/(www\.)?[\w\-\/\.a-z#?]{1,}/i).required(),
