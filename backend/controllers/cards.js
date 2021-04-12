@@ -27,7 +27,7 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  const owner = req.user._id;
+  const owner = req.card._id;
   Card.findOne({ _id: req.params.cardId })
     .orFail(new NotFoundError('Нет карточки с такими данными'))
     .then((card) => {
