@@ -27,16 +27,15 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  const { cardId } = req.params;
-  Card.findByIdAndDelete(cardId)
+  const owner = req.user._id;
+  Card.findOne({ _id: req.params.cardId })
     .orFail(new NotFoundError('Нет карточки с такими данными'))
     .then((card) => {
-      if (card.owner.toString() !== req.user._id) {
+      if (!card.owner.equals(owner)) {
         throw new ProfileError('У вас нет прав на данное дейтвие');
       } else {
-        Card.findByIdAndDelete(req.params.cardId)
-          .then((delcard) => res.send({ delcard }))
-          .catch(next);
+        Card.deleteOne(card)
+          .then(() => res.status(200).send({ message: 'Карточка удалена' }));
       }
     })
     .catch((err) => {
