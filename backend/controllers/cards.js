@@ -28,13 +28,13 @@ const createCard = (req, res, next) => {
 
 const deleteCard = (req, res, next) => {
   const card = req.params._id;
-  Card.findByIdAndDelete(card._id)
+  Card.findByIdAndRemove(card)
     .orFail(new NotFoundError('Нет карточки с такими данными'))
     .then((c) => {
       if (c.owner.toString() !== req.user._id) {
         throw new ProfileError('У вас нет прав на данное дейтвие');
       } else {
-        Card.findByIdAndDelete(req.params.card)
+        Card.findByIdAndDelete(req.params._id)
           .then((cardDeleteButtonClassName) => res.send({ cardDeleteButtonClassName }))
           .catch(next);
       }
