@@ -28,7 +28,7 @@ const createCard = (req, res, next) => {
 
 const deleteCard = (req, res, next) => {
   const card = req.user._id;
-  Card.findByIdAndRemove({ _id: req.params.card._id })
+  Card.findByIdAndRemove({ _id: req.params.card })
     .orFail(new NotFoundError('Нет карточки с такими данными'))
     .then((c) => {
       if (!c.card.equals(card)) {
