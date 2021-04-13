@@ -27,7 +27,7 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  Card.findById(req.params.cardId)
+  Card.findById(req.params.card._id)
     .then((card) => {
       if (!card) {
         throw new NotFoundError('Нет карточки с такими данными');
