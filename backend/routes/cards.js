@@ -6,7 +6,7 @@ const {
 } = require('../controllers/cards');
 const auth = require('../middlewares/auth');
 
-router.get('/card', getCards);
+router.get('/', getCards);
 
 router.post('/card', celebrate({
   body: Joi.object().keys({
