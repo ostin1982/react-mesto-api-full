@@ -6,9 +6,9 @@ const {
 } = require('../controllers/cards');
 const auth = require('../middlewares/auth');
 
-router.get('/', getCards);
+router.get('/card', getCards);
 
-router.post('/', celebrate({
+router.post('/card', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     // eslint-disable-next-line
