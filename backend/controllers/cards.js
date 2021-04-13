@@ -27,19 +27,24 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  const card = req.user._id;
-  Card.findByIdAndRemove({ _id: req.params.card })
-    .orFail(new NotFoundError('Нет карточки с такими данными'))
-    .then((c) => {
-      if (!c.card.equals(card)) {
-        throw new ProfileError('У вас нет прав на данное дейтвие');
-      } else {
-        Card.deleteOne(c)
-          .then(() => res.status(200).send({ message: 'Карточка удалена' }));
+  Card.findById(req.params.cardId)
+    .then((card) => {
+      if (!card) {
+        throw new NotFoundError('Нет карточки с такими данными');
       }
-    })
-    .catch((err) => {
-      throw err;
+      if (card.owner.toString() !== req.user._id) {
+        throw new ProfileError('У вас нет прав на данное дейтвие');
+      }
+      Card.deleteOne(card)
+        .then(() => {
+          res.send({ messages: 'Карточка успешно удалена' });
+        })
+        .catch((error) => {
+          if (error.name === 'CastError') {
+            throw new ValidationError('Ошибка в заполнении полей');
+          }
+          next(error);
+        });
     })
     .catch(next);
 };
