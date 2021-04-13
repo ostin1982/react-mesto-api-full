@@ -77,7 +77,7 @@ const login = (req, res, next) => {
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' },
       );
 
-      res.send({ token });
+      res.send({ jwt: token });
     })
     .catch((err) => {
       if (err.name === 'Error') {
@@ -92,8 +92,7 @@ const createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
-  User.findOne({ email })
-    .then(() => (bcrypt.hash(password, 10)))
+  bcrypt.hash(password, 10)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))

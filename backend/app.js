@@ -47,7 +47,7 @@ app.post('/signup', celebrate({
     password: Joi.string().required(),
   }),
 }),
-createUser);
+login);
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -55,7 +55,7 @@ app.post('/signin', celebrate({
     password: Joi.string().required(),
   }),
 }),
-login);
+createUser);
 
 app.get('/crash-test', () => {
   setTimeout(() => {
