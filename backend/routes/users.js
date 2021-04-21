@@ -2,17 +2,18 @@ const router = require('express').Router();
 const { celebrate, Joi } = require('celebrate');
 
 const {
-  getUsers, getProfile, createProfile, updateProfile, updateAvatar, login, createUser,
+  getUsers, getProfile, createProfile, updateProfile, updateAvatar,
 } = require('../controllers/users');
 
 router.get('/', getUsers);
-router.get('/:userId', getProfile);
-router.get('/', celebrate({
-  params: {
-    userId: Joi.string().required().length(24).hex(),
-  },
-}),
-createProfile);
+
+router.get('/me', getProfile);
+
+router.get('/:id', celebrate({
+  params: Joi.object().keys({
+    id: Joi.string().required().length(24).hex(),
+  }),
+}), createProfile);
 
 router.patch('/me', celebrate({
   body: Joi.object().keys({
@@ -23,23 +24,8 @@ router.patch('/me', celebrate({
 
 router.patch('/me/avatar', celebrate({
   body: Joi.object().keys({
-    // eslint-disable-next-line
-    avatar: Joi.string().pattern(/^https?:\/\/(www\.)?[\w\-\/\.a-z#?]{1,}/i).required(),
+    avatar: Joi.string().required().pattern(new RegExp(/^https?:\/\/[\w\-.~:/?#[\]@!$&'()*+,;=%]{4,2048}$/)),
   }),
 }), updateAvatar);
-
-router.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-  }),
-}), login);
-
-router.post('/signup', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email(),
-    password: Joi.string().required().min(8),
-  }),
-}), createUser);
 
 module.exports = router;

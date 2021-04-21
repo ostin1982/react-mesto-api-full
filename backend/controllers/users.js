@@ -9,22 +9,28 @@ const NotFoundError = require('../errors/NotFoundError');
 const AuthenticationError = require('../errors/AuthenticationError');
 const ValidationError = require('../errors/ValidationError');
 
-const getUsers = (req, res, next) => User.findById(req.user._id)
-  .then((user) => {
-    if (!user) {
-      throw new NotFoundError('Нет пользователя с таким id');
-    }
-    return res.status(200).send({ data: user });
-  })
-  .catch(next);
+const getUsers = (req, res, next) => {
+  const { _id } = req.user;
+
+  User.findById(_id)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Нет пользователя с таким id');
+      }
+      return res.status(200).send({ data: user });
+    })
+    .catch(next);
+};
 
 const getProfile = (req, res, next) => {
-  User.find({})
+  const { _id } = req.user;
+
+  User.findById(_id)
     .then((users) => {
       if (!users) {
         throw new NotFoundError('Нет пользователя с таким id');
       }
-      res.status(200).send(users);
+      res.send(users);
     })
     .catch(next);
 };
@@ -44,25 +50,37 @@ const createProfile = (req, res, next) => User.findById(req.params.userId)
   });
 
 const updateProfile = (req, res, next) => {
-  User.findByIdAndUpdate(req.user._id, { name: req.body.name, about: req.body.about },
-    { runValidators: true })
-    .then((user) => {
-      if (!user) {
+  const { _id } = req.user;
+  const { name, about } = req.body;
+
+  User.findByIdAndUpdate(_id, { name, about },
+    {
+      new: true,
+      runValidators: true,
+    })
+    .then((user) => res.status(200).send(user))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
         throw new ValidationError('Ошибка в заполнении полей');
       }
-      res.status(200).send({ data: user });
     })
     .catch(next);
 };
 
 const updateAvatar = (req, res, next) => {
-  User.findByIdAndUpdate(req.user._id,
-    { avatar: req.body.avatar }, { runValidators: true })
-    .then((user) => {
-      if (!user) {
+  const { _id } = req.user;
+  const { avatar } = req.body;
+
+  User.findByIdAndUpdate(_id, { avatar },
+    {
+      new: true,
+      runValidators: true,
+    })
+    .then((user) => res.status(200).send(user))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
         throw new ValidationError('Ошибка в заполнении полей');
       }
-      res.status(200).send({ data: user });
     })
     .catch(next);
 };
@@ -77,15 +95,12 @@ const login = (req, res, next) => {
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' },
       );
 
-      res.send({ jwt: token });
+      res.status(200).send({ token });
     })
-    .catch((err) => {
-      if (err.name === 'Error') {
-        next(new AuthenticationError('Необходима авторизация'));
-      } else {
-        next(err);
-      }
-    });
+    .catch(() => {
+      throw new AuthenticationError('Необходима авторизация');
+    })
+    .catch(next);
 };
 
 const createUser = (req, res, next) => {
@@ -96,14 +111,17 @@ const createUser = (req, res, next) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((user) => res.status(200).send({ mail: user.email }))
+    .then((user) => res.status(200).send({
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      email: user.email,
+    }))
     .catch((err) => {
-      if (err.name === 'ValidationError' || err.name === 'CastError') {
-        throw new AuthenticationError('Необходима авторизация');
+      if (err.name === 'ValidationError') {
+        throw new ValidationError('Ошибка в заполнении полей');
       }
-      if (err.name === 'MongoError' || err.code === '11000') {
-        throw new RegistrationError('Пользователь с такими данными уже зарегистирирован');
-      }
+      throw new RegistrationError('Пользователь с такими данными уже зарегистирирован');
     })
     .catch(next);
 };
