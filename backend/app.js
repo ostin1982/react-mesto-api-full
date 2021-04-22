@@ -9,7 +9,6 @@ const bodyParser = require('body-parser');
 const router = require('./routes/router');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
-const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 
@@ -63,7 +62,7 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.use('/', auth, router);
+app.use('/', router);
 
 app.use(expressWinston.logger({
   transports: [
