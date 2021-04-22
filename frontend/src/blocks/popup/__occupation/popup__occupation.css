@@ -1,0 +1,22 @@
+.popup__occupation {
+    width: 358px;
+    height: 58px; 
+    border-top:none;
+    border-right: none;
+    border-left: none;
+    box-sizing: border-box;
+}
+
+.popup__occupation::placeholder {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 17px;
+    color: #000000;
+}
+
+@media screen and (max-width: 530px) {
+    .popup__occupation { 
+        max-width: 228px;
+    }
+}

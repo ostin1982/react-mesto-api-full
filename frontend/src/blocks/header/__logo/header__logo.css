@@ -1,0 +1,10 @@
+.header__logo {
+    position: relative;
+    max-width: 142px;
+}
+
+@media screen and (max-width: 1279px) {
+    .header__logo {
+        width: calc((100vw - 320px)/(1279 - 320) * (142 - 104) + 104px);
+}
+}

@@ -1,0 +1,10 @@
+.element__info {
+    background-color: #FFFFFF;
+    margin-top: -5px;
+    padding: 25px 15px 30px 20px;
+    border-radius: 0px 0px 10px 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}

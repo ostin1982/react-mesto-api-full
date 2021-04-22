@@ -1,0 +1,26 @@
+.register__submit {
+    width: 100%;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 22px;
+    background-color: #ffffff;
+    padding: 14px 84px;
+    border-radius: 2px;
+    margin-top: 216px;
+}
+
+.register__submit:hover {
+    cursor: pointer;
+    opacity: 0.6;
+    transition: all 0.5s ease-out;
+}
+
+@media screen and (max-width: 530px) {
+    .register__submit {
+        font-size: 16px;
+        line-height: 19px;
+        padding: 14px 35px;
+        margin-top: 173px;
+    }
+}
