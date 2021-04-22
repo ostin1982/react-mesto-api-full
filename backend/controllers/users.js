@@ -24,11 +24,11 @@ const getProfile = (req, res, next) => {
   const { _id } = req.params;
 
   User.findById(_id)
-    .then((users) => {
-      if (!users) {
+    .then((user) => {
+      if (!user) {
         throw new NotFoundError('Нет карточки с такими данными сейчас');
       }
-      res.send(users);
+      res.send(user);
     })
     .catch(next);
 };
