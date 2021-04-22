@@ -16,7 +16,7 @@ const createCard = (req, res, next) => {
       Card.findById(card._id)
         .then((data) => res.status(200).send(data))
         .catch(() => {
-          throw new NotFoundError('Карточки с данным id не существует');
+          throw new NotFoundError('Нет карточки с такими данными');
         });
     })
     .catch((err) => {
