@@ -21,7 +21,7 @@ const getUsers = (req, res, next) => {
 };
 
 const getProfile = (req, res, next) => {
-  const { _id } = req.user;
+  const { _id } = req.params;
 
   User.findById(_id)
     .then((user) => {
@@ -33,7 +33,7 @@ const getProfile = (req, res, next) => {
     .catch(next);
 };
 
-const createProfile = (req, res, next) => User.findById(req.params.user._id)
+const createProfile = (req, res, next) => User.findById(req.user._id)
   .then((user) => {
     if (!user) {
       throw new NotFoundError('Нет карточки с такими данными');
