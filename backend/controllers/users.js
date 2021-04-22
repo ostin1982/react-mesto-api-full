@@ -10,9 +10,7 @@ const AuthenticationError = require('../errors/AuthenticationError');
 const ValidationError = require('../errors/ValidationError');
 
 const getUsers = (req, res, next) => {
-  const { _id } = req.user;
-
-  User.findById(_id)
+  User.findById({})
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Нет карточки с такими данными');
