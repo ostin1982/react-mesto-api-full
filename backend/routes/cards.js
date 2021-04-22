@@ -13,19 +13,19 @@ router.post('/card', celebrate({
   }),
 }), createCard);
 
-router.delete('/:cardId', celebrate({
+router.delete('/:card._id', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().length(24).required().hex(),
   }),
 }), deleteCard);
 
-router.put('/:cardId/likes', celebrate({
+router.put('/:card._id/likes', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().length(24).required().hex(),
   }),
 }), likeCard);
 
-router.delete('/:cardId/likes', celebrate({
+router.delete('/:card._id/likes', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().length(24).required().hex(),
   }),
