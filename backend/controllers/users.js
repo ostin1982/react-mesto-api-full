@@ -26,7 +26,7 @@ const getProfile = (req, res, next) => {
   User.findById(_id)
     .then((users) => {
       if (!users) {
-        throw new NotFoundError('Нет карточки с такими данными');
+        throw new NotFoundError('Нет карточки с такими данными сейчас');
       }
       res.send(users);
     })
