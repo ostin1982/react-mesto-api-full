@@ -54,7 +54,7 @@ const likeCard = (req, res, next) => {
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'CastError' || err.message === 'Not found') {
-        throw new NotFoundError('Карточки с данным id не существует');
+        throw new NotFoundError('Нет карточки с такими данными');
       }
     })
     .catch(next);
