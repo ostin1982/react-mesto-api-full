@@ -21,9 +21,9 @@ const getUsers = (req, res, next) => {
 };
 
 const getProfile = (req, res, next) => {
-  const { _id } = req.params;
+  const { id } = req.params;
 
-  User.findById(_id)
+  User.findById(id)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Нет карточки с такими данными!');
