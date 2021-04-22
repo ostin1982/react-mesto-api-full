@@ -21,7 +21,7 @@ const getUsers = (req, res, next) => {
 };
 
 const getProfile = (req, res, next) => {
-  const { _id } = req.params;
+  const { _id } = req.user;
 
   User.findById(_id)
     .then((user) => {
