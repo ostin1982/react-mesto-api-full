@@ -15,7 +15,7 @@ const getUsers = (req, res, next) => {
   User.findById(_id)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Нет пользователя с таким id');
+        throw new NotFoundError('Нет карточки с такими данными');
       }
       return res.status(200).send({ data: user });
     })
@@ -28,17 +28,17 @@ const getProfile = (req, res, next) => {
   User.findById(_id)
     .then((users) => {
       if (!users) {
-        throw new NotFoundError('Нет пользователя с таким id');
+        throw new NotFoundError('Нет карточки с такими данными');
       }
       res.send(users);
     })
     .catch(next);
 };
 
-const createProfile = (req, res, next) => User.findById(req.params.userId)
+const createProfile = (req, res, next) => User.findById(req.params.user._id)
   .then((user) => {
     if (!user) {
-      throw new NotFoundError('Нет пользователя с таким id');
+      throw new NotFoundError('Нет карточки с такими данными');
     }
     res.status(200).send(user);
   })
