@@ -6,26 +6,26 @@ const {
 
 router.get('/', getCards);
 
-router.post('/card', celebrate({
+router.post('/', celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30),
     link: Joi.string().required().pattern(new RegExp(/^https?:\/\/[\w\-.~:/?#[\]@!$&'()*+,;=%]{4,2048}$/)),
   }),
 }), createCard);
 
-router.delete('/:card._id', celebrate({
+router.delete('/:id', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().length(24).required().hex(),
   }),
 }), deleteCard);
 
-router.put('/:card._id/likes', celebrate({
+router.put('/likes/:id', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().length(24).required().hex(),
   }),
 }), likeCard);
 
-router.delete('/:card._id/likes', celebrate({
+router.delete('/likes/:id', celebrate({
   params: Joi.object().keys({
     cardId: Joi.string().length(24).required().hex(),
   }),
