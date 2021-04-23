@@ -74,7 +74,7 @@ app.use(expressWinston.logger({
 app.use(errors());
 
 app.use('*', () => {
-  throw new NotFoundError('Запрашиваемый ресурс не найден');
+  throw new NotFoundError('A card with such data does not exist');
 });
 
 // eslint-disable-next-line no-unused-vars
