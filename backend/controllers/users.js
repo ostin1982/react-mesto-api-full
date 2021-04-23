@@ -20,14 +20,14 @@ const getUsers = (req, res, next) => {
 };
 
 const getProfile = (req, res, next) => {
-  const id = req.params._id;
+  const { id } = req.params._id;
 
   User.findById(id)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Нет карточки с такими данными!');
       }
-      res.send({ data: user });
+      res.send(user);
     })
     .catch(next);
 };
