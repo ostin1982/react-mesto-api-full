@@ -8,6 +8,45 @@ const RegistrationError = require('../errors/RegistrationError');
 const NotFoundError = require('../errors/NotFoundError');
 const ValidationError = require('../errors/ValidationError');
 
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+
+  return User.findUserByCredentials(email, password)
+    .then((user) => {
+      const token = jwt.sign(
+        { _id: user._id },
+        JWT_SECRET,
+        { expiresIn: '7d' },
+      );
+
+      res.send({ token });
+    })
+    .catch(next);
+};
+
+const createUser = (req, res, next) => {
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
+    .then((user) => res.status(200).send({
+      name: user.name,
+      about: user.about,
+      avatar: user.avatar,
+      email: user.email,
+    }))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        throw new ValidationError('Ошибка в заполнении полей');
+      }
+      throw new RegistrationError('Пользователь с такими данными уже зарегистирирован');
+    })
+    .catch(next);
+};
+
 const getUsers = (req, res, next) => {
   User.findById({})
     .then((user) => {
@@ -20,7 +59,9 @@ const getUsers = (req, res, next) => {
 };
 
 const getProfile = (req, res, next) => {
-  User.findById(req.params._id)
+  const id = req.params._id;
+
+  User.findById(id)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Нет карточки с такими данными!');
@@ -76,45 +117,6 @@ const updateAvatar = (req, res, next) => {
       if (err.name === 'ValidationError') {
         throw new ValidationError('Ошибка в заполнении полей');
       }
-    })
-    .catch(next);
-};
-
-const login = (req, res, next) => {
-  const { email, password } = req.body;
-
-  return User.findUserByCredentials(email, password)
-    .then((user) => {
-      const token = jwt.sign(
-        { _id: user._id },
-        JWT_SECRET,
-        { expiresIn: '7d' },
-      );
-
-      res.send({ token });
-    })
-    .catch(next);
-};
-
-const createUser = (req, res, next) => {
-  const {
-    name, about, avatar, email, password,
-  } = req.body;
-  bcrypt.hash(password, 10)
-    .then((hash) => User.create({
-      name, about, avatar, email, password: hash,
-    }))
-    .then((user) => res.status(200).send({
-      name: user.name,
-      about: user.about,
-      avatar: user.avatar,
-      email: user.email,
-    }))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        throw new ValidationError('Ошибка в заполнении полей');
-      }
-      throw new RegistrationError('Пользователь с такими данными уже зарегистирирован');
     })
     .catch(next);
 };
