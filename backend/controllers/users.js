@@ -93,7 +93,7 @@ const login = (req, res, next) => {
         { expiresIn: '7d' },
       );
 
-      res.send({ jwt: token });
+      res.send({ token });
     })
     .catch(next);
 };
