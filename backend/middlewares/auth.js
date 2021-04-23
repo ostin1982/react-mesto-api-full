@@ -6,8 +6,8 @@ const AuthenticationError = require('../errors/AuthenticationError');
 const auth = (req, res, next) => {
   const { authorization } = req.headers;
 
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    return next(new AuthenticationError('Необходима авторизация!!!'));
+  if (!authorization) {
+    throw new AuthenticationError('Необходима авторизация!!!');
   }
 
   const token = authorization.replace('Bearer ', '');
@@ -15,12 +15,12 @@ const auth = (req, res, next) => {
 
   try {
     payload = jwt.verify(token, JWT_SECRET);
-  } catch (e) {
-    return next(new AuthenticationError('Необходима авторизация'));
+  } catch (err) {
+    throw new AuthenticationError('Необходима авторизация');
   }
 
   req.user = payload;
-  return next();
+  next();
 };
 
 module.exports = auth;
