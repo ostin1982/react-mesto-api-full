@@ -27,7 +27,7 @@ const getProfile = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Нет карточки с такими данными!');
       }
-      return res.status(200).send(user);
+      res.send({ data: user });
     })
     .catch(next);
 };
