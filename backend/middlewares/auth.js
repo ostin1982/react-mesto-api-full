@@ -11,14 +11,15 @@ const auth = (req, res, next) => {
   }
 
   const token = authorization.replace('Bearer ', '');
+  let payload;
 
   try {
-    const payload = jwt.verify(token, JWT_SECRET);
-    req.user = payload;
+    payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
     throw new AuthenticationError('Необходима авторизация');
   }
 
+  req.user = payload;
   next();
 };
 

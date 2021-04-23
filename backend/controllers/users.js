@@ -7,7 +7,6 @@ const User = require('../models/user');
 const RegistrationError = require('../errors/RegistrationError');
 const NotFoundError = require('../errors/NotFoundError');
 const ValidationError = require('../errors/ValidationError');
-const AuthenticationError = require('../errors/AuthenticationError');
 
 const getUsers = (req, res, next) => {
   User.findById({})
@@ -86,22 +85,15 @@ const updateAvatar = (req, res, next) => {
 const login = (req, res, next) => {
   const { email, password } = req.body;
 
-  User.findOne({ email }).select('+password')
+  return User.findUserByCredentials(email, password)
     .then((user) => {
-      if (!user) {
-        throw new AuthenticationError('Необходима авторизация!!');
-      }
-      return bcrypt.compare(password, user.password)
-        .then((matched) => {
-          if (matched) {
-            return user;
-          }
-          throw new AuthenticationError('Необходима авторизация!');
-        });
-    })
-    .then((user) => {
-      const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
-      res.send({ jwt: token });
+      const token = jwt.sign(
+        { _id: user._id },
+        JWT_SECRET,
+        { expiresIn: '7d' },
+      );
+
+      res.send({ token });
     })
     .catch(next);
 };
