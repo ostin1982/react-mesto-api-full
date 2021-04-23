@@ -3,11 +3,9 @@ const ValidationError = require('../errors/ValidationError');
 const ProfileError = require('../errors/ProfileError');
 const NotFoundError = require('../errors/NotFoundError');
 
-const getCards = (req, res, next) => {
-  Card.find({})
-    .then((cards) => res.status(200).send(cards))
-    .catch(next);
-};
+const getCards = (req, res, next) => Card.find({})
+  .then((cards) => res.status(200).send(cards))
+  .catch(next);
 
 const createCard = (req, res, next) => {
   const { _id } = req.user;
