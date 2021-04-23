@@ -7,6 +7,7 @@ const winston = require('winston');
 const { celebrate, errors, Joi } = require('celebrate');
 const bodyParser = require('body-parser');
 const router = require('./routes/router');
+const auth = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
 
@@ -62,6 +63,7 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
+app.use(auth);
 app.use('/', router);
 
 app.use(expressWinston.logger({
