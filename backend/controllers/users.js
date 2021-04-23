@@ -20,14 +20,14 @@ const getUsers = (req, res, next) => {
 };
 
 const getProfile = (req, res, next) => {
-  const id = req.params._id;
+  const id = req.user._id;
 
   User.findById(id)
-    .then((users) => {
-      if (!users) {
+    .then((user) => {
+      if (!user) {
         throw new NotFoundError('A card with such data does not exist!');
       }
-      res.send(users);
+      return res.status(200).send(user);
     })
     .catch(next);
 };
