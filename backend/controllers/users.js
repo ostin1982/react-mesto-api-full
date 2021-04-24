@@ -20,8 +20,8 @@ const getUsers = (req, res, next) => {
 };
 
 const getProfile = (req, res, next) => {
-  const id = req.user;
-  User.findById(id)
+  const _id = req.user;
+  User.findById(_id)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Карточки с такими данными не существует!');
@@ -32,8 +32,8 @@ const getProfile = (req, res, next) => {
 };
 
 const createProfile = (req, res, next) => {
-  const id = req.user;
-  User.findById(id)
+  const _id = req.user;
+  User.findById(_id)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Карточки с такими данными не существует');
@@ -49,10 +49,10 @@ const createProfile = (req, res, next) => {
 };
 
 const updateProfile = (req, res, next) => {
-  const id = req.user;
+  const _id = req.user;
   const { name, about } = req.body;
 
-  User.findByIdAndUpdate(id, { name, about },
+  User.findByIdAndUpdate(_id, { name, about },
     {
       new: true,
       runValidators: true,
@@ -67,10 +67,10 @@ const updateProfile = (req, res, next) => {
 };
 
 const updateAvatar = (req, res, next) => {
-  const id = req.user;
+  const _id = req.user;
   const { avatar } = req.body;
 
-  User.findByIdAndUpdate(id, { avatar },
+  User.findByIdAndUpdate(_id, { avatar },
     {
       new: true,
       runValidators: true,
@@ -101,7 +101,7 @@ const login = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
-  const { body } = req.user;
+  const { body } = req;
   bcrypt.hash(body.password, 10)
     .then((hash) => User.create({ ...body, password: hash }))
     .then((user) => res.send({ data: `Пользователь ${user.email} создан` }))
