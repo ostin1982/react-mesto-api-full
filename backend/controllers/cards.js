@@ -21,7 +21,7 @@ const createCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new ValidationError('Ошибка в заполнении полей');
+        throw new ValidationError('Error in filling in the fields');
       }
     })
     .catch(next);
