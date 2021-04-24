@@ -10,35 +10,35 @@ const ValidationError = require('../errors/ValidationError');
 
 const getUsers = (req, res, next) => {
   User.findById({})
-    .then((user) => {
-      if (!user) {
+    .then((users) => {
+      if (!users) {
         throw new NotFoundError('Карточки с такими данными не существует');
       }
-      return res.status(200).send(user);
+      return res.status(200).send(users);
     })
     .catch(next);
 };
 
 const getProfile = (req, res, next) => {
-  const _id = req.user;
+  const _id = req.users;
   User.findById(_id)
-    .then((user) => {
-      if (!user) {
+    .then((users) => {
+      if (!users) {
         throw new NotFoundError('Карточки с такими данными не существует!');
       }
-      return res.status(200).send(user);
+      return res.status(200).send(users);
     })
     .catch(next);
 };
 
 const createProfile = (req, res, next) => {
-  const _id = req.user;
+  const _id = req.users;
   User.findById(_id)
-    .then((user) => {
-      if (!user) {
+    .then((users) => {
+      if (!users) {
         throw new NotFoundError('Карточки с такими данными не существует');
       }
-      res.status(200).send(user);
+      res.status(200).send(users);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -49,7 +49,7 @@ const createProfile = (req, res, next) => {
 };
 
 const updateProfile = (req, res, next) => {
-  const _id = req.user;
+  const _id = req.users;
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(_id, { name, about },
@@ -57,7 +57,7 @@ const updateProfile = (req, res, next) => {
       new: true,
       runValidators: true,
     })
-    .then((user) => res.status(200).send(user))
+    .then((users) => res.status(200).send(users))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new ValidationError('Ошибка в заполнении полей');
@@ -67,7 +67,7 @@ const updateProfile = (req, res, next) => {
 };
 
 const updateAvatar = (req, res, next) => {
-  const _id = req.user;
+  const _id = req.users;
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(_id, { avatar },
@@ -75,7 +75,7 @@ const updateAvatar = (req, res, next) => {
       new: true,
       runValidators: true,
     })
-    .then((user) => res.status(200).send(user))
+    .then((users) => res.status(200).send(users))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new ValidationError('Ошибка в заполнении полей');
@@ -88,9 +88,9 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
-    .then((user) => {
+    .then((users) => {
       const token = jwt.sign(
-        { _id: user._id },
+        { _id: users._id },
         JWT_SECRET,
         { expiresIn: '7d' },
       );
@@ -104,7 +104,7 @@ const createUser = (req, res, next) => {
   const { body } = req;
   bcrypt.hash(body.password, 10)
     .then((hash) => User.create({ ...body, password: hash }))
-    .then((user) => res.send({ data: `Пользователь ${user.email} создан` }))
+    .then((users) => res.send({ data: `Пользователь ${users.email} создан` }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new ValidationError('Ошибка в заполнении полей');
