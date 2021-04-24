@@ -9,7 +9,7 @@ router.get('/', getUsers);
 
 router.get('/me', getProfile);
 
-router.get('/:_id', celebrate({
+router.get('/:id', celebrate({
   params: Joi.object().keys({
     id: Joi.string().required().length(24).hex(),
   }),
