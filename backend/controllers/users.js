@@ -19,20 +19,9 @@ const getUsers = (req, res, next) => {
     .catch(next);
 };
 
-const getUser = (req, res, next) => {
-  const id = req.params._id;
-  User.findById(id)
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('A card with such data does not exist');
-      }
-      return res.status(200).send(user);
-    })
-    .catch(next);
-};
-
 const getProfile = (req, res, next) => {
-  User.findById(req.user._id)
+  const id = req.user._id;
+  User.findById(id)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('A card with such data does not exist!');
@@ -42,19 +31,22 @@ const getProfile = (req, res, next) => {
     .catch(next);
 };
 
-const createProfile = (req, res, next) => User.findById(req.params.user._id)
-  .then((user) => {
-    if (!user) {
-      throw new NotFoundError('A card with such data does not exist');
-    }
-    res.status(200).send(user);
-  })
-  .catch((err) => {
-    if (err.name === 'CastError') {
-      next(new ValidationError('Error in filling in the fields'));
-    }
-    next(err);
-  });
+const createProfile = (req, res, next) => {
+  const id = req.params._id;
+  User.findById(id)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('A card with such data does not exist');
+      }
+      res.status(200).send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new ValidationError('Error in filling in the fields'));
+      }
+      next(err);
+    });
+};
 
 const updateProfile = (req, res, next) => {
   const id = req.user._id;
@@ -98,7 +90,7 @@ const login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign(
-        { id: user._id },
+        { _id: user._id },
         JWT_SECRET,
         { expiresIn: '7d' },
       );
@@ -123,5 +115,5 @@ const createUser = (req, res, next) => {
 };
 
 module.exports = {
-  getUsers, getUser, getProfile, createProfile, updateProfile, updateAvatar, login, createUser,
+  getUsers, getProfile, createProfile, updateProfile, updateAvatar, login, createUser,
 };
