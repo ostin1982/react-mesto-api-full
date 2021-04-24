@@ -20,10 +20,10 @@ const getUsers = (req, res, next) => {
 };
 
 const getProfile = (req, res, next) => {
-  const id = req.user;
+  const id = req.params;
   User.findById(id)
     .then((user) => {
-      if (user) {
+      if (!user) {
         throw new NotFoundError('Карточки с такими данными не существует!');
       }
       return res.status(200).send(user);
