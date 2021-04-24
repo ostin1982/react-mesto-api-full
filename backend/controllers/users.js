@@ -20,7 +20,7 @@ const getUsers = (req, res, next) => {
 };
 
 const getProfile = (req, res, next) => {
-  const id = req.params;
+  const id = req.user;
   User.findById(id)
     .then((user) => {
       if (!user) {
@@ -32,7 +32,7 @@ const getProfile = (req, res, next) => {
 };
 
 const createProfile = (req, res, next) => {
-  const id = req.params;
+  const id = req.user;
   User.findById(id)
     .then((user) => {
       if (!user) {
@@ -101,7 +101,7 @@ const login = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
-  const { body } = req;
+  const { body } = req.user;
   bcrypt.hash(body.password, 10)
     .then((hash) => User.create({ ...body, password: hash }))
     .then((user) => res.send({ data: `Пользователь ${user.email} создан` }))
