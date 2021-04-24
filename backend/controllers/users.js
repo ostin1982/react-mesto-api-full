@@ -12,7 +12,7 @@ const getUsers = (req, res, next) => {
   User.findById({})
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('A card with such data does not exist');
+        throw new NotFoundError('Карточки с такими данными не существует');
       }
       return res.status(200).send(user);
     })
@@ -23,8 +23,8 @@ const getProfile = (req, res, next) => {
   const id = req.user;
   User.findById(id)
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError('A card with such data does not exist!');
+      if (user) {
+        throw new NotFoundError('Карточки с такими данными не существует!');
       }
       return res.status(200).send(user);
     })
@@ -36,13 +36,13 @@ const createProfile = (req, res, next) => {
   User.findById(id)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('A card with such data does not exist');
+        throw new NotFoundError('Карточки с такими данными не существует');
       }
       res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new ValidationError('Error in filling in the fields'));
+        next(new ValidationError('Ошибка в заполнении полей'));
       }
       next(err);
     });
@@ -60,7 +60,7 @@ const updateProfile = (req, res, next) => {
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new ValidationError('Error in filling in the fields');
+        throw new ValidationError('Ошибка в заполнении полей');
       }
     })
     .catch(next);
@@ -78,7 +78,7 @@ const updateAvatar = (req, res, next) => {
     .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new ValidationError('Error in filling in the fields');
+        throw new ValidationError('Ошибка в заполнении полей');
       }
     })
     .catch(next);
@@ -107,9 +107,9 @@ const createUser = (req, res, next) => {
     .then((user) => res.send({ data: `Пользователь ${user.email} создан` }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new ValidationError('Error in filling in the fields');
+        throw new ValidationError('Ошибка в заполнении полей');
       }
-      throw new RegistrationError('The user with this data is already registered');
+      throw new RegistrationError('Пользователь с этими данными уже зарегистрирован');
     })
     .catch(next);
 };

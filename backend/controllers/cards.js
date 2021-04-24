@@ -16,12 +16,12 @@ const createCard = (req, res, next) => {
       Card.findById(card._id)
         .then((data) => res.status(200).send(data))
         .catch(() => {
-          throw new NotFoundError('A card with such data does not exist');
+          throw new NotFoundError('Карточки с такими данными не существует');
         });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new ValidationError('Error in filling in the fields');
+        throw new ValidationError('Ошибка в заполнении полей');
       }
     })
     .catch(next);
@@ -31,7 +31,7 @@ const deleteCard = (req, res, next) => {
   const { id } = req.params;
 
   Card.findByIdAndRemove(id)
-    .orFail(new NotFoundError('A card with such data does not exist'))
+    .orFail(new NotFoundError('Карточки с такими данными не существует'))
     .then((card) => res.status(200).send(card))
     .catch((err) => {
       if (err.name === 'CastError' || err.message === 'Not found') {
@@ -50,11 +50,11 @@ const likeCard = (req, res, next) => {
     runValidators: true,
     upsert: true,
   })
-    .orFail(() => { throw new NotFoundError('A card with such data does not exist'); })
+    .orFail(() => { throw new NotFoundError('Карточки с такими данными не существует'); })
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'CastError' || err.message === 'Not found') {
-        throw new NotFoundError('A card with such data does not exist');
+        throw new NotFoundError('Карточки с такими данными не существует');
       }
     })
     .catch(next);
@@ -68,11 +68,11 @@ const dislikeCard = (req, res, next) => {
     runValidators: true,
     upsert: true,
   })
-    .orFail(() => { throw new NotFoundError('A card with such data does not exist'); })
+    .orFail(() => { throw new NotFoundError('Карточки с такими данными не существует'); })
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'CastError' || err.message === 'Not found') {
-        throw new NotFoundError('A card with such data does not exist');
+        throw new NotFoundError('Карточки с такими данными не существует');
       }
     })
     .catch(next);
