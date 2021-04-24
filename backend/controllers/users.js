@@ -32,7 +32,7 @@ const getProfile = (req, res, next) => {
 };
 
 const createProfile = (req, res, next) => {
-  const id = req.params._id;
+  const id = req.params;
   User.findById(id)
     .then((user) => {
       if (!user) {
@@ -49,7 +49,7 @@ const createProfile = (req, res, next) => {
 };
 
 const updateProfile = (req, res, next) => {
-  const id = req.user._id;
+  const id = req.user;
   const { name, about } = req.body;
 
   User.findByIdAndUpdate(id, { name, about },
@@ -67,7 +67,7 @@ const updateProfile = (req, res, next) => {
 };
 
 const updateAvatar = (req, res, next) => {
-  const id = req.user._id;
+  const id = req.user;
   const { avatar } = req.body;
 
   User.findByIdAndUpdate(id, { avatar },
