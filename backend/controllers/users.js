@@ -20,7 +20,7 @@ const getUsers = (req, res, next) => {
 };
 
 const getProfile = (req, res, next) => {
-  User.findById({ id: req.params.id })
+  User.findById(req.params._id)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('A card with such data does not exist!');
