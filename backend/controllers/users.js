@@ -20,7 +20,7 @@ const getUsers = (req, res, next) => {
 };
 
 const getProfile = (req, res, next) => {
-  const id = req.user._id;
+  const id = req.user;
   User.findById(id)
     .then((user) => {
       if (!user) {
@@ -90,7 +90,7 @@ const login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign(
-        { _id: user.id },
+        { _id: user._id },
         JWT_SECRET,
         { expiresIn: '7d' },
       );
