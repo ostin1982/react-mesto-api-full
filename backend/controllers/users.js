@@ -19,6 +19,18 @@ const getUsers = (req, res, next) => {
     .catch(next);
 };
 
+const getUser = (req, res, next) => {
+  const id = req.params._id;
+  User.findById(id)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('A card with such data does not exist');
+      }
+      return res.status(200).send(user);
+    })
+    .catch(next);
+};
+
 const getProfile = (req, res, next) => {
   User.findById(req.user._id)
     .then((user) => {
@@ -63,10 +75,10 @@ const updateProfile = (req, res, next) => {
 };
 
 const updateAvatar = (req, res, next) => {
-  const { _id } = req.user;
+  const id = req.user._id;
   const { avatar } = req.body;
 
-  User.findByIdAndUpdate(_id, { avatar },
+  User.findByIdAndUpdate(id, { avatar },
     {
       new: true,
       runValidators: true,
@@ -111,5 +123,5 @@ const createUser = (req, res, next) => {
 };
 
 module.exports = {
-  getUsers, getProfile, createProfile, updateProfile, updateAvatar, login, createUser,
+  getUsers, getUser, getProfile, createProfile, updateProfile, updateAvatar, login, createUser,
 };
