@@ -20,7 +20,7 @@ const getUsers = (req, res, next) => {
 };
 
 const getProfile = (req, res, next) => {
-  User.findById(req.params._id)
+  User.findById(req.user._id)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('A card with such data does not exist!');
@@ -45,10 +45,10 @@ const createProfile = (req, res, next) => User.findById(req.params.user._id)
   });
 
 const updateProfile = (req, res, next) => {
-  const { _id } = req.user;
+  const id = req.user._id;
   const { name, about } = req.body;
 
-  User.findByIdAndUpdate(_id, { name, about },
+  User.findByIdAndUpdate(id, { name, about },
     {
       new: true,
       runValidators: true,
