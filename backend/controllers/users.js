@@ -97,19 +97,10 @@ const login = (req, res, next) => {
 };
 
 const createUser = (req, res, next) => {
-  const {
-    name, about, avatar, email, password,
-  } = req.body;
-  bcrypt.hash(password, 10)
-    .then((hash) => User.create({
-      name, about, avatar, email, password: hash,
-    }))
-    .then((user) => res.status(200).send({
-      name: user.name,
-      about: user.about,
-      avatar: user.avatar,
-      email: user.email,
-    }))
+  const { body } = req;
+  bcrypt.hash(body.password, 10)
+    .then((hash) => User.create({ ...body, password: hash }))
+    .then((user) => res.send({ data: `Пользователь ${user.email} создан` }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new ValidationError('Error in filling in the fields');
