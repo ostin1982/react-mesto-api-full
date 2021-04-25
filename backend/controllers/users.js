@@ -20,18 +20,20 @@ const getUsers = (req, res, next) => {
 };
 
 const getProfile = (req, res, next) => {
-  User.findById(req.users)
-    .then((params) => {
-      if (!params) {
+  const id = req.user._id;
+  User.findById(id)
+    .then((users) => {
+      if (!users) {
         throw new NotFoundError('Карточки с такими данными не существует!');
       }
-      return res.status(200).send(params);
+      return res.status(200).send(users);
     })
     .catch(next);
 };
 
 const createProfile = (req, res, next) => {
-  User.findById(req.users)
+  const { id } = req.params;
+  User.findById(id)
     .then((users) => {
       if (!users) {
         throw new NotFoundError('Карточки с такими данными не существует');
