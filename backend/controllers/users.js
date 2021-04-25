@@ -9,7 +9,7 @@ const NotFoundError = require('../errors/NotFoundError');
 const ValidationError = require('../errors/ValidationError');
 
 const getUsers = (req, res, next) => {
-  User.findById({})
+  User.find({})
     .then((users) => {
       if (!users) {
         throw new NotFoundError('Карточки с такими данными не существует');
@@ -20,7 +20,7 @@ const getUsers = (req, res, next) => {
 };
 
 const getProfile = (req, res, next) => {
-  const id = req.users;
+  const { id } = req.users._id;
   User.findById(id)
     .then((users) => {
       if (!users) {
@@ -32,7 +32,7 @@ const getProfile = (req, res, next) => {
 };
 
 const createProfile = (req, res, next) => {
-  const id = req.users;
+  const id = req.params;
   User.findById(id)
     .then((users) => {
       if (!users) {
