@@ -32,7 +32,7 @@ const getProfile = (req, res, next) => {
 };
 
 const createProfile = (req, res, next) => {
-  const { id } = req.users._id;
+  const { id } = req.users;
   User.findById(id)
     .then((users) => {
       if (!users) {
