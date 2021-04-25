@@ -8,12 +8,12 @@ const getCards = (req, res, next) => Card.find({})
   .catch(next);
 
 const createCard = (req, res, next) => {
-  const { id } = req.user;
+  const { _id } = req.user;
   const { name, link } = req.body;
 
-  Card.create({ name, link, owner: id })
+  Card.create({ name, link, owner: _id })
     .then((card) => {
-      Card.findById(card.id)
+      Card.findById(card._id)
         .then((data) => res.status(200).send(data))
         .catch(() => {
           throw new NotFoundError('Карточки с такими данными не существует');
