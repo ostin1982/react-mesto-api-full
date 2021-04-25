@@ -20,7 +20,7 @@ const getUsers = (req, res, next) => {
 };
 
 const getProfile = (req, res, next) => {
-  User.findById(req.params)
+  User.findById(req.users)
     .then((params) => {
       if (!params) {
         throw new NotFoundError('Карточки с такими данными не существует!');
