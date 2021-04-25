@@ -20,8 +20,8 @@ const getUsers = (req, res, next) => {
 };
 
 const getProfile = (req, res, next) => {
-  const _id = req.users;
-  User.findById(_id)
+  const id = req.users;
+  User.findById(id)
     .then((users) => {
       if (!users) {
         throw new NotFoundError('Карточки с такими данными не существует!');
@@ -32,8 +32,8 @@ const getProfile = (req, res, next) => {
 };
 
 const createProfile = (req, res, next) => {
-  const _id = req.users;
-  User.findById(_id)
+  const id = req.users;
+  User.findById(id)
     .then((users) => {
       if (!users) {
         throw new NotFoundError('Карточки с такими данными не существует');
@@ -49,10 +49,10 @@ const createProfile = (req, res, next) => {
 };
 
 const updateProfile = (req, res, next) => {
-  const _id = req.users;
+  const id = req.users;
   const { name, about } = req.body;
 
-  User.findByIdAndUpdate(_id, { name, about },
+  User.findByIdAndUpdate(id, { name, about },
     {
       new: true,
       runValidators: true,
@@ -67,10 +67,10 @@ const updateProfile = (req, res, next) => {
 };
 
 const updateAvatar = (req, res, next) => {
-  const _id = req.users;
+  const id = req.users;
   const { avatar } = req.body;
 
-  User.findByIdAndUpdate(_id, { avatar },
+  User.findByIdAndUpdate(id, { avatar },
     {
       new: true,
       runValidators: true,
@@ -90,7 +90,7 @@ const login = (req, res, next) => {
   return User.findUserByCredentials(email, password)
     .then((users) => {
       const token = jwt.sign(
-        { _id: users._id },
+        { id: users._id },
         JWT_SECRET,
         { expiresIn: '7d' },
       );

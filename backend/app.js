@@ -6,6 +6,7 @@ const expressWinston = require('express-winston');
 const winston = require('winston');
 const { celebrate, errors, Joi } = require('celebrate');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const router = require('./routes/router');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
@@ -32,6 +33,7 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
 });
 
 app.use(bodyParser.json());
+app.use(cors());
 
 app.use(expressWinston.logger({
   transports: [
@@ -89,7 +91,4 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
-  console.log(`Сервер запущен. Порт: ${PORT}`);
-});
+app.listen(PORT);
