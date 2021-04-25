@@ -21,11 +21,11 @@ const getUsers = (req, res, next) => {
 
 const getProfile = (req, res, next) => {
   User.findById(req.params)
-    .then((users) => {
-      if (!users) {
+    .then((params) => {
+      if (!params) {
         throw new NotFoundError('Карточки с такими данными не существует!');
       }
-      return res.status(200).send(users);
+      return res.status(200).send(params);
     })
     .catch(next);
 };
