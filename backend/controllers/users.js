@@ -95,14 +95,7 @@ const login = (req, res, next) => {
         { expiresIn: '7d' },
       );
 
-      return res.send({
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar,
-        email: user.email,
-        _id: user._id,
-        token,
-      });
+      return res.send({ token });
     })
     .catch(next);
 };
