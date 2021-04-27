@@ -88,14 +88,21 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
 
   return User.findUserByCredentials(email, password)
-    .then((users) => {
+    .then((user) => {
       const token = jwt.sign(
-        { id: users._id },
+        { _id: user._id },
         JWT_SECRET,
         { expiresIn: '7d' },
       );
 
-      res.send({ token });
+      return res.send({
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+        email: user.email,
+        _id: user._id,
+        token,
+      });
     })
     .catch(next);
 };
@@ -104,7 +111,7 @@ const createUser = (req, res, next) => {
   const { body } = req;
   bcrypt.hash(body.password, 10)
     .then((hash) => User.create({ ...body, password: hash }))
-    .then((users) => res.send({ data: `Пользователь ${users.email} создан` }))
+    .then((user) => res.send({ data: `Пользователь ${user.email} создан` }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new ValidationError('Ошибка в заполнении полей');
