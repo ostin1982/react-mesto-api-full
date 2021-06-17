@@ -3,7 +3,7 @@ const ValidationError = require('../errors/ValidationError');
 const NotFoundError = require('../errors/NotFoundError');
 const ProfileError = require('../errors/ProfileError');
 
-const getCards = (req, res, next) => Card.find({})
+const getCards = (req, res, next) => Card.find({}).populate('user')
   .then((cards) => res.send(cards))
   .catch(next);
 
@@ -12,19 +12,13 @@ const createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: _id })
-    .then((card) => {
-      Card.findById(card._id)
-        .then((data) => res.status(200).send(data))
-        .catch(() => {
-          throw new NotFoundError('Карточки с такими данными не существует');
-        });
-    })
+    .then((card) => res.send(card))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
-        throw new ValidationError('Ошибка в заполнении полей');
+      if (err.name === 'CastError' || err.name === 'ValidationError') {
+        next(new ValidationError('Данные не коректны'));
       }
-    })
-    .catch(next);
+      next(err);
+    });
 };
 
 const deleteCard = (req, res, next) => {
