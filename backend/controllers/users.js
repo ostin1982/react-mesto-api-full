@@ -20,8 +20,8 @@ const getUsers = (req, res, next) => {
 };
 
 const getProfile = (req, res, next) => {
-  const id = req.user;
-  User.findById(id)
+  const _id = req.user;
+  User.findById(_id)
     .then((users) => {
       if (!users) {
         throw new NotFoundError('Карточки с такими данными не существует!');
@@ -32,8 +32,8 @@ const getProfile = (req, res, next) => {
 };
 
 const createProfile = (req, res, next) => {
-  const { id } = req.params;
-  User.findById(id)
+  const { _id } = req.params;
+  User.findById(_id)
     .then((users) => {
       if (!users) {
         throw new NotFoundError('Карточки с такими данными не существует');
@@ -49,10 +49,10 @@ const createProfile = (req, res, next) => {
 };
 
 const updateProfile = (req, res, next) => {
-  const id = req.users;
+  const _id = req.users;
   const { name, about } = req.body;
 
-  User.findByIdAndUpdate(id, { name, about },
+  User.findByIdAndUpdate(_id, { name, about },
     {
       new: true,
       runValidators: true,
@@ -67,10 +67,10 @@ const updateProfile = (req, res, next) => {
 };
 
 const updateAvatar = (req, res, next) => {
-  const id = req.users;
+  const _id = req.users;
   const { avatar } = req.body;
 
-  User.findByIdAndUpdate(id, { avatar },
+  User.findByIdAndUpdate(_id, { avatar },
     {
       new: true,
       runValidators: true,
