@@ -4,18 +4,24 @@ const express = require('express');
 const mongoose = require('mongoose');
 const expressWinston = require('express-winston');
 const winston = require('winston');
-const { celebrate, Joi, CelebrateError } = require('celebrate');
+const { celebrate, errors, Joi } = require('celebrate');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const auth = require('./middlewares/auth');
-const cardsRouter = require('./routes/cards');
-const usersRouter = require('./routes/users');
+const helmet = require('helmet');
+const router = require('./routes/router');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
-const ValidationError = require('./errors/ValidationError');
+
+const { PORT = 3000 } = process.env;
 
 const app = express();
-const { PORT = 3000 } = process.env;
+
+const allowedCors = [
+  'https://ostin.student.nomoredomains.club',
+  'http://ostin.student.nomoredomains.club',
+  'http://localhost:3001',
+  'http://localhost:3000',
+];
 
 mongoose.connect('mongodb://localhost:27017/mestodb', {
   useNewUrlParser: true,
@@ -24,10 +30,25 @@ mongoose.connect('mongodb://localhost:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
-app.use(cors());
+const corsOptions = {
+  origin: allowedCors,
+  optionsSuccessStatus: 200,
+};
 
+app.use((req, res, next) => {
+  const { origin } = req.headers;
+
+  if (allowedCors.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
+
+  next();
+});
+
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(helmet());
 
 app.use(expressWinston.logger({
   transports: [
@@ -42,24 +63,23 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.post('/signin', celebrate({
-  body: Joi.object().keys({
-    email: Joi.string().required().email().message('Требуется Email'),
-    password: Joi.string().required().min(8).message('Минимум 8 символов'),
-  }),
-}),
-login);
-
 app.post('/signup', celebrate({
   body: Joi.object().keys({
-    email: Joi.string().required().email().message('Требуется Email'),
-    password: Joi.string().required().min(8).message('Минимум 8 символов'),
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
   }),
 }),
 createUser);
 
-app.use('/cards', auth, cardsRouter);
-app.use('/users', auth, usersRouter);
+app.post('/signin', celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email(),
+    password: Joi.string().required(),
+  }),
+}),
+login);
+
+app.use('/', router);
 
 app.use(expressWinston.logger({
   transports: [
@@ -68,15 +88,10 @@ app.use(expressWinston.logger({
   format: winston.format.json(),
 }));
 
-app.use(() => {
-  throw new NotFoundError('Карточки с такими данными не существует');
-});
+app.use(errors());
 
-app.use((err, req, res, next) => {
-  if (err instanceof CelebrateError) {
-    next(new ValidationError('Данные не коректны'));
-  }
-  res.status(500).send({ message: err.message });
+app.use('*', () => {
+  throw new NotFoundError('Карточки с такими данными не существует');
 });
 
 // eslint-disable-next-line no-unused-vars
@@ -91,4 +106,4 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.listen(PORT, () => {});
+app.listen(PORT);
