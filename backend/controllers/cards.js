@@ -1,10 +1,10 @@
 const Card = require('../models/card');
 const ValidationError = require('../errors/ValidationError');
-const NotFoundError = require('../errors/NotFoundError');
 const ProfileError = require('../errors/ProfileError');
+const NotFoundError = require('../errors/NotFoundError');
 
-const getCards = (req, res, next) => Card.find({}).populate('user')
-  .then((cards) => res.send(cards))
+const getCards = (req, res, next) => Card.find({})
+  .then((cards) => res.status(200).send(cards))
   .catch(next);
 
 const createCard = (req, res, next) => {
@@ -12,72 +12,70 @@ const createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: _id })
-    .then((card) => res.send(card))
+    .then((card) => {
+      Card.findById(card._id)
+        .then((data) => res.status(200).send(data))
+        .catch(() => {
+          throw new NotFoundError('Карточки с такими данными не существует');
+        });
+    })
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
-        next(new ValidationError('Данные не коректны'));
+      if (err.name === 'ValidationError') {
+        throw new ValidationError('Ошибка в заполнении полей');
       }
-      next(err);
-    });
+    })
+    .catch(next);
 };
 
 const deleteCard = (req, res, next) => {
-  Card.findById(req.params._id)
-    .then((card) => {
-      if (!card) throw new NotFoundError('Карточки с такими данными не существует!');
-      if (!card.owner.equals(req.user._id)) {
-        throw new ProfileError('Ошибка доступа');
-      }
-      card.remove();
-      res.send(card);
-    })
+  const { id } = req.params;
+
+  Card.findByIdAndRemove(id)
+    .orFail(new NotFoundError('Карточки с такими данными не существует'))
+    .then((card) => res.status(200).send(card))
     .catch((err) => {
-      if (err.name === 'DocumentNotFoundError') {
-        next(new NotFoundError('Карточки с такими данными не существует!'));
+      if (err.name === 'CastError' || err.message === 'Not found') {
+        throw new ProfileError('У вас нет прав на данное дейтвие');
       }
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
-        next(new ValidationError('Данные не коректны'));
-      }
-      next(err);
-    });
+    })
+    .catch(next);
 };
 
 const likeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(
-    req.params._id,
-    { $addToSet: { likes: req.user._id } },
-    { new: true },
-  )
-    .orFail()
+  const { _id } = req.user;
+  const { id } = req.params;
+
+  Card.findByIdAndUpdate(id, { $addToSet: { likes: _id } }, {
+    new: true,
+    runValidators: true,
+    upsert: true,
+  })
+    .orFail(() => { throw new NotFoundError('Карточки с такими данными не существует'); })
     .then((card) => res.send(card))
     .catch((err) => {
-      if (err.name === 'DocumentNotFoundError') {
-        next(new NotFoundError('Карточки с такими данными не существует!'));
+      if (err.name === 'CastError' || err.message === 'Not found') {
+        throw new NotFoundError('Карточки с такими данными не существует');
       }
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
-        next(new ValidationError('Данные не коректны'));
-      }
-      next(err);
-    });
+    })
+    .catch(next);
 };
 
 const dislikeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(
-    req.params._id,
-    { $pull: { likes: req.user._id } },
-    { new: true },
-  )
-    .orFail()
+  const { _id } = req.user;
+  const { id } = req.params;
+  Card.findByIdAndUpdate(id, { $pull: { likes: _id } }, {
+    new: true,
+    runValidators: true,
+    upsert: true,
+  })
+    .orFail(() => { throw new NotFoundError('Карточки с такими данными не существует'); })
     .then((card) => res.send(card))
     .catch((err) => {
-      if (err.name === 'DocumentNotFoundError') {
-        next(new NotFoundError('Карточки с такими данными не существует!'));
+      if (err.name === 'CastError' || err.message === 'Not found') {
+        throw new NotFoundError('Карточки с такими данными не существует');
       }
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
-        next(new ValidationError('Данные не коректны'));
-      }
-      next(err);
-    });
+    })
+    .catch(next);
 };
 
 module.exports = {
