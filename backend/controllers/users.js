@@ -9,18 +9,19 @@ const NotFoundError = require('../errors/NotFoundError');
 const ValidationError = require('../errors/ValidationError');
 
 const getUsers = (req, res, next) => {
-  User.find(req.params.userId)
+  User.find({})
     .then((user) => res.send(user))
     .catch(next);
 };
 
 const getProfile = (req, res, next) => {
-  User.findById(req.user._id)
-    .then((user) => {
-      if (!user) {
+  User.findById(req.params.id)
+    .orFail(new Error('NotFound'))
+    .then((user) => res.status(200).send(user))
+    .catch((err) => {
+      if (err.message === 'NotFound') {
         throw new NotFoundError('Карточки с такими данными не существует');
       }
-      return res.status(200).send(user);
     })
     .catch(next);
 };
