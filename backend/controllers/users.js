@@ -20,8 +20,8 @@ const getUsers = (req, res, next) => {
 };
 
 const getProfile = (req, res, next) => {
-  const id = req.user;
-  User.findById(id)
+  const _id = req.user;
+  User.findById(_id)
     .then((users) => {
       if (!users) {
         throw new NotFoundError('Карточки с такими данными не существует!');
@@ -32,8 +32,8 @@ const getProfile = (req, res, next) => {
 };
 
 const createProfile = (req, res, next) => {
-  const { id } = req.params;
-  User.findById(id)
+  const { _id } = req.params;
+  User.findById(_id)
     .then((users) => {
       if (!users) {
         throw new NotFoundError('Карточки с такими данными не существует');
