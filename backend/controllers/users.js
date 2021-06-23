@@ -15,23 +15,23 @@ const getUsers = (req, res, next) => {
 };
 
 const getProfile = (req, res, next) => {
-  User.findById(req.params._id)
-    .then((users) => {
-      if (!users) {
-        throw new NotFoundError('Карточки с такими данными не существует!');
+  User.findById(req.user._id)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Карточки с такими данными не существует');
       }
-      return res.status(200).send(users);
+      return res.status(200).send(user);
     })
     .catch(next);
 };
 
 const createProfile = (req, res, next) => {
   User.findById(req.user._id)
-    .then((users) => {
-      if (!users) {
-        throw new NotFoundError('Карточки с такими данными не существует');
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Карточки с такими данными не существует!');
       }
-      res.status(200).send(users);
+      res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {

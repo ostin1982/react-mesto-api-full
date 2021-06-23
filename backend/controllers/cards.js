@@ -16,7 +16,7 @@ const createCard = (req, res, next) => {
       Card.findById(card._id)
         .then((data) => res.status(200).send(data))
         .catch(() => {
-          throw new NotFoundError('Карточки с такими данными не существует');
+          throw new NotFoundError('Карточки с такими данными не существует!');
         });
     })
     .catch((err) => {
@@ -29,7 +29,7 @@ const createCard = (req, res, next) => {
 
 const deleteCard = (req, res, next) => {
   Card.findByIdAndRemove(req.params._id)
-    .orFail(new NotFoundError('Карточки с такими данными не существует'))
+    .orFail(new NotFoundError('Карточки с такими данными не существует!'))
     .then((card) => res.status(200).send(card))
     .catch((err) => {
       if (err.name === 'CastError' || err.message === 'Not found') {
@@ -66,11 +66,11 @@ const dislikeCard = (req, res, next) => {
     runValidators: true,
     upsert: true,
   })
-    .orFail(() => { throw new NotFoundError('Карточки с такими данными не существует'); })
+    .orFail(() => { throw new NotFoundError('Карточки с такими данными не существует!'); })
     .then((card) => res.send(card))
     .catch((err) => {
       if (err.name === 'CastError' || err.message === 'Not found') {
-        throw new NotFoundError('Карточки с такими данными не существует');
+        throw new NotFoundError('Карточки с такими данными не существует!');
       }
     })
     .catch(next);
