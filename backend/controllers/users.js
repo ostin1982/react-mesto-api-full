@@ -43,10 +43,9 @@ const createProfile = (req, res, next) => {
 };
 
 const updateProfile = (req, res, next) => {
-  const _id = req.user;
   const { name, about } = req.body;
 
-  User.findByIdAndUpdate(_id, { name, about },
+  User.findByIdAndUpdate(req.user._id, { name, about },
     {
       new: true,
       runValidators: true,
