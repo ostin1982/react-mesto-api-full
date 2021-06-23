@@ -10,12 +10,7 @@ const ValidationError = require('../errors/ValidationError');
 
 const getUsers = (req, res, next) => {
   User.find({})
-    .then((users) => {
-      if (!users) {
-        throw new NotFoundError('Карточки с такими данными не существует');
-      }
-      return res.status(200).send(users);
-    })
+    .then((users) => res.send(users))
     .catch(next);
 };
 
