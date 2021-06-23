@@ -60,10 +60,9 @@ const updateProfile = (req, res, next) => {
 };
 
 const updateAvatar = (req, res, next) => {
-  const _id = req.user;
   const { avatar } = req.body;
 
-  User.findByIdAndUpdate(_id, { avatar },
+  User.findByIdAndUpdate(req.user._id, { avatar },
     {
       new: true,
       runValidators: true,
