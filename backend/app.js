@@ -8,9 +8,11 @@ const { celebrate, errors, Joi } = require('celebrate');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const helmet = require('helmet');
-const router = require('./routes/router');
+const cardsRouter = require('./routes/cards');
+const usersRouter = require('./routes/users');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
+const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 
@@ -49,6 +51,7 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet());
+app.use(auth);
 
 app.use(expressWinston.logger({
   transports: [
@@ -79,7 +82,8 @@ app.post('/signin', celebrate({
 }),
 login);
 
-app.use('/', router);
+app.use('/', cardsRouter);
+app.use('/', usersRouter);
 
 app.use(expressWinston.logger({
   transports: [
