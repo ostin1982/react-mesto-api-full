@@ -8,8 +8,7 @@ const { celebrate, errors, Joi } = require('celebrate');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const helmet = require('helmet');
-const cardsRouter = require('./routes/cards');
-const usersRouter = require('./routes/users');
+const router = require('./routes/router');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
 const auth = require('./middlewares/auth');
@@ -82,8 +81,7 @@ app.post('/signin', celebrate({
 }),
 login);
 
-app.use('/', cardsRouter);
-app.use('/', usersRouter);
+app.use('/', router);
 
 app.use(expressWinston.logger({
   transports: [
