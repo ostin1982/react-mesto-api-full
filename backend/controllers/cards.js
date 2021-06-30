@@ -4,7 +4,7 @@ const ProfileError = require('../errors/ProfileError');
 const NotFoundError = require('../errors/NotFoundError');
 
 const getCards = (req, res, next) => Card.find({})
-  .then((card) => res.status(200).send(card))
+  .then((card) => res.status(200).send(card._id))
   .catch(next);
 
 const createCard = (req, res, next) => {
@@ -12,7 +12,7 @@ const createCard = (req, res, next) => {
 
   Card.create({ name, link, owner: req.user._id })
     .then((card) => {
-      Card.findById(card.id)
+      Card.findById(card._id)
         .then((data) => res.status(200).send(data))
         .catch(() => {
           throw new NotFoundError('Карточки с такими данными не существует!');
