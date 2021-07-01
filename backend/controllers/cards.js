@@ -1,25 +1,17 @@
 const Card = require('../models/card');
-const ValidationError = require('../errors/ValidationError');
 const ProfileError = require('../errors/ProfileError');
 const NotFoundError = require('../errors/NotFoundError');
 
 const getCards = (req, res, next) => Card.find({})
-  .then((cards) => res.status(200).send({ data: cards }))
+  .then((cards) => res.send(cards))
   .catch(next);
 
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
+  const { _id: owner } = req.user;
 
-  Card.create({ name, link, owner: req.user._id })
-    .then((card) => res.status(200).send({ data: card }))
-    .catch(() => {
-      throw new NotFoundError('Карточки с такими данными не существует!');
-    })
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        throw new ValidationError('Ошибка в заполнении полей');
-      }
-    })
+  Card.create({ name, link, owner })
+    .then((card) => res.send(card))
     .catch(next);
 };
 
