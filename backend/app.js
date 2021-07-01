@@ -8,11 +8,8 @@ const { celebrate, errors, Joi } = require('celebrate');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const helmet = require('helmet');
-const usersRouter = require('./routes/users');
-const cardsRouter = require('./routes/cards');
+const router = require('./routes/router');
 const { login, createUser } = require('./controllers/users');
-const NotFoundError = require('./errors/NotFoundError');
-const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 
@@ -81,8 +78,7 @@ app.post('/signin', celebrate({
 }),
 login);
 
-app.use('/', auth, usersRouter);
-app.use('/', auth, cardsRouter);
+app.use('/', router);
 
 app.use(expressWinston.logger({
   transports: [
@@ -92,10 +88,6 @@ app.use(expressWinston.logger({
 }));
 
 app.use(errors());
-
-app.use('*', () => {
-  throw new NotFoundError('Карточки с такими данными не существует');
-});
 
 app.use((err, req, res, next) => {
   const { statusCode = 500, message } = err;
