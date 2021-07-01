@@ -12,7 +12,7 @@ const createCard = (req, res, next) => {
 
   Card.create({ name, link, owner: req.user._id })
     .then((card) => {
-      Card.findById(card)
+      Card.findById(card.id)
         .then((data) => res.status(200).send(data))
         .catch(() => {
           throw new NotFoundError('Карточки с такими данными не существует!');
