@@ -8,11 +8,8 @@ const { celebrate, errors, Joi } = require('celebrate');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const helmet = require('helmet');
-const userRoutes = require('./routes/users');
-const cardRoutes = require('./routes/cards');
-const auth = require('./middlewares/auth');
+const router = require('./routes/router');
 const { login, createUser } = require('./controllers/users');
-const NotFoundError = require('./errors/NotFoundError');
 
 const { PORT = 3000 } = process.env;
 
@@ -89,12 +86,7 @@ app.post('/signin', celebrate({
 }),
 login);
 
-app.use('/', auth, userRoutes);
-app.use('/', auth, cardRoutes);
-
-app.use('*', (req, res, next) => {
-  next(new NotFoundError({ message: 'Карточки с такими данными не существует' }));
-});
+app.use(router);
 
 app.use(errors());
 

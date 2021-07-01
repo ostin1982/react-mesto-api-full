@@ -1,4 +1,4 @@
-const { JWT_SECRET } = process.env;
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -15,7 +15,8 @@ const getUsers = (req, res, next) => {
 };
 
 const getProfile = (req, res, next) => {
-  User.findById(req.user._id)
+  const { _id } = req.user;
+  User.findById(_id)
     .orFail(new Error('NotFound'))
     .then((user) => res.status(200).send(user))
     .catch((err) => {
@@ -44,8 +45,9 @@ const createProfile = (req, res, next) => {
 
 const updateProfile = (req, res, next) => {
   const { name, about } = req.body;
+  const { _id } = req.user;
 
-  User.findByIdAndUpdate(req.user._id, { name, about },
+  User.findByIdAndUpdate(_id, { name, about },
     {
       new: true,
       runValidators: true,
@@ -81,21 +83,30 @@ const login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
+      const { _id } = user;
       const token = jwt.sign(
-        { _id: user._id },
-        JWT_SECRET,
+        { _id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key',
         { expiresIn: '7d' },
       );
-
-      return res.send({ token });
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+      }).send({ tokenStatus: 'ok' });
     })
     .catch(next);
 };
 
 const createUser = (req, res, next) => {
-  const { body } = req;
-  bcrypt.hash(body.password, 10)
-    .then((hash) => User.create({ ...body, password: hash }))
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      name, about, avatar, email, password: hash,
+    }))
     .then((user) => res.send({ data: `Пользователь ${user.email} создан` }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
