@@ -4,7 +4,7 @@ const ProfileError = require('../errors/ProfileError');
 const NotFoundError = require('../errors/NotFoundError');
 
 const getCards = (req, res, next) => Card.find({})
-  .then((card) => res.status(200).send(card._id))
+  .then((cards) => res.status(200).send(cards))
   .catch(next);
 
 const createCard = (req, res, next) => {
