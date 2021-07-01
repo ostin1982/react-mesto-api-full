@@ -11,12 +11,9 @@ const createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user._id })
-    .then((card) => {
-      Card.findById(card._id)
-        .then((data) => res.status(200).send(data))
-        .catch(() => {
-          throw new NotFoundError('Карточки с такими данными не существует!');
-        });
+    .then((card) => res.status(200).send({ data: card }))
+    .catch(() => {
+      throw new NotFoundError('Карточки с такими данными не существует!');
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
