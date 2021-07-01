@@ -10,7 +10,6 @@ const helmet = require('helmet');
 const router = require('./routes/router');
 const { login, createUser } = require('./controllers/users');
 const NotFoundError = require('./errors/NotFoundError');
-const auth = require('./middlewares/auth');
 
 const { PORT = 3000 } = process.env;
 
@@ -60,7 +59,7 @@ app.post('/signin', celebrate({
 }),
 login);
 
-app.use('/', auth, router);
+app.use('/', router);
 
 app.get('/crash-test', () => {
   setTimeout(() => {
