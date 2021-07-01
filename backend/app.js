@@ -70,7 +70,7 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.post('/signup', celebrate({
+app.post('/signup', express.json(), celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required(),
@@ -78,7 +78,7 @@ app.post('/signup', celebrate({
 }),
 createUser);
 
-app.post('/signin', celebrate({
+app.post('/signin', express.json(), celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required(),
