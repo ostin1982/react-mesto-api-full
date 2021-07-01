@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 const expressWinston = require('express-winston');
 const winston = require('winston');
 const { celebrate, errors, Joi } = require('celebrate');
-const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const cors = require('cors');
 const helmet = require('helmet');
 const router = require('./routes/router');
@@ -45,7 +45,7 @@ app.use((req, res, next) => {
 });
 
 app.use(cors(corsOptions));
-app.use(cookieParser());
+app.use(bodyParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(helmet());
