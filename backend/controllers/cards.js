@@ -9,10 +9,11 @@ const getCards = (req, res, next) => Card.find({})
 
 const createCard = (req, res, next) => {
   const { name, link } = req.body;
+  const { _id: owner } = req.user;
 
-  Card.create({ name, link, owner: req.user._id })
+  Card.create({ name, link, owner })
     .then((card) => {
-      Card.findById(card.id)
+      Card.findById(card)
         .then((data) => res.status(200).send(data))
         .catch(() => {
           throw new NotFoundError('Карточки с такими данными не существует!');
@@ -27,7 +28,9 @@ const createCard = (req, res, next) => {
 };
 
 const deleteCard = (req, res, next) => {
-  Card.findByIdAndRemove(req.params.cardId)
+  const { cardId } = req.params;
+
+  Card.findByIdAndRemove(cardId)
     .orFail(new NotFoundError('Карточки с такими данными не существует!'))
     .then((card) => res.status(200).send(card))
     .catch((err) => {
@@ -39,10 +42,11 @@ const deleteCard = (req, res, next) => {
 };
 
 const likeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: req.user._id } }, {
+  const { cardId } = req.params;
+  const { _id } = req.user;
+
+  Card.findByIdAndUpdate(cardId, { $addToSet: { likes: _id } }, {
     new: true,
-    runValidators: true,
-    upsert: true,
   })
     .orFail(() => { throw new NotFoundError('Карточки с такими данными не существует'); })
     .then((card) => res.send(card))
@@ -55,10 +59,11 @@ const likeCard = (req, res, next) => {
 };
 
 const dislikeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: req.user._id } }, {
+  const { cardId } = req.params;
+  const { _id } = req.user;
+
+  Card.findByIdAndUpdate(cardId, { $pull: { likes: _id } }, {
     new: true,
-    runValidators: true,
-    upsert: true,
   })
     .orFail(() => { throw new NotFoundError('Карточки с такими данными не существует!'); })
     .then((card) => res.send(card))

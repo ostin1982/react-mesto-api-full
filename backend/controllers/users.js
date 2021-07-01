@@ -16,6 +16,7 @@ const getUsers = (req, res, next) => {
 
 const getProfile = (req, res, next) => {
   const { _id } = req.user;
+
   User.findById(_id)
     .orFail(new Error('NotFound'))
     .then((user) => res.status(200).send(user))
@@ -28,7 +29,9 @@ const getProfile = (req, res, next) => {
 };
 
 const createProfile = (req, res, next) => {
-  User.findById(req.params.userId)
+  const { userId } = req.params;
+
+  User.findById(userId)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('Карточки с такими данными не существует!');
@@ -63,11 +66,13 @@ const updateProfile = (req, res, next) => {
 
 const updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
+  const { _id } = req.user;
 
-  User.findByIdAndUpdate(req.user._id, { avatar },
+  User.findByIdAndUpdate(_id, { avatar },
     {
       new: true,
       runValidators: true,
+      upsert: false,
     })
     .then((user) => res.status(200).send(user))
     .catch((err) => {
