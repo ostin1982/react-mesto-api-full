@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const mongoose = require('mongoose');
 const expressWinston = require('express-winston');
@@ -84,7 +86,7 @@ app.post('/signin', celebrate({
 }),
 login);
 
-app.use('/', router);
+app.use(router);
 
 app.use(errors());
 
